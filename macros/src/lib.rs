@@ -489,10 +489,11 @@ fn expand_derive_decode(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, anno
                 };
 
                 let (mut cond, mut cond_default) = (None, None);
+                let field_type = &field.ty;
 
                 let mut statement = vec![
                     quote_stmt!(cx,
-                        let $let_name = try!(::pod::Decode::decode(__r));
+                        let $let_name: $field_type = try!(::pod::Decode::decode(__r));
                     ).unwrap()
                 ];
 
