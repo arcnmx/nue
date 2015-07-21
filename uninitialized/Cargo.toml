@@ -1,0 +1,14 @@
+[package]
+name = "uninitialized"
+version = "0.0.1"
+authors = ["arcnmx"]
+
+description = "Opt-in unsafe uninitialized memory"
+documentation = "http://arcnmx.github.io/nue/uninitialized/"
+repository = "https://github.com/arcnmx/nue"
+readme = "../README.md"
+keywords = ["uninitialized", "zeroed", "memory", "unsafe", "nue"]
+license = "MIT"
+
+[features]
+uninitialized = []

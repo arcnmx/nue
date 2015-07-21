@@ -1,0 +1,26 @@
+[package]
+name = "pod"
+version = "0.0.1"
+authors = ["arcnmx"]
+
+description = "Plain Old Data (POD) encoding and I/O"
+documentation = "http://arcnmx.github.io/nue/pod/"
+repository = "https://github.com/arcnmx/nue"
+readme = "../README.md"
+keywords = ["nue", "pod", "data", "encode", "endian"]
+license = "MIT"
+
+[features]
+unstable = ["resize-slice/unstable"]
+
+[dependencies]
+byteorder = "0.3"
+resize-slice = "0.0"
+
+[dependencies.nue-io]
+version = "0.0"
+path = "../io"
+
+[dependencies.uninitialized]
+version = "0.0"
+path = "../uninitialized"

@@ -1,0 +1,15 @@
+[package]
+name = "nue-io"
+version = "0.0.1"
+authors = ["arcnmx"]
+
+description = "Binary data encoding and I/O"
+documentation = "http://arcnmx.github.io/nue/nue_io/"
+repository = "https://github.com/arcnmx/nue"
+readme = "../README.md"
+keywords = ["binary", "data", "encoding", "decoding", "serialization"]
+license = "MIT"
+
+[dependencies]
+byteorder = "0.3"
+resize-slice = "0.0"
