@@ -698,6 +698,9 @@
 <span id="656">656</span>
 <span id="657">657</span>
 <span id="658">658</span>
+<span id="659">659</span>
+<span id="660">660</span>
+<span id="661">661</span>
 </pre><pre class='rust '>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>feature</span>(<span class='ident'>plugin_registrar</span>, <span class='ident'>rustc_private</span>, <span class='ident'>plugin</span>)]</span>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>plugin</span>(<span class='ident'>quasi_macros</span>)]</span>
@@ -723,8 +726,10 @@
 <span class='doccomment'>//! ### Example</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! ```</span>
-<span class='doccomment'>//! # #![feature(plugin, custom_derive, custom_attribute)] #![plugin(nue_macros)]</span>
-<span class='doccomment'>//! # extern crate pod;</span>
+<span class='doccomment'>//! #![feature(plugin, custom_derive, custom_attribute)]</span>
+<span class='doccomment'>//! #![plugin(nue_macros)]</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! extern crate pod;</span>
 <span class='doccomment'>//! use pod::{Encode, PodExt};</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! # fn main() {</span>
@@ -1188,10 +1193,11 @@
                 };
 
                 <span class='kw'>let</span> (<span class='kw-2'>mut</span> <span class='ident'>cond</span>, <span class='kw-2'>mut</span> <span class='ident'>cond_default</span>) <span class='op'>=</span> (<span class='prelude-val'>None</span>, <span class='prelude-val'>None</span>);
+                <span class='kw'>let</span> <span class='ident'>field_type</span> <span class='op'>=</span> <span class='kw-2'>&amp;</span><span class='ident'>field</span>.<span class='ident'>ty</span>;
 
                 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>statement</span> <span class='op'>=</span> <span class='macro'>vec</span><span class='macro'>!</span>[
                     <span class='macro'>quote_stmt</span><span class='macro'>!</span>(<span class='ident'>cx</span>,
-                        <span class='kw'>let</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>let_name</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(::<span class='ident'>pod</span>::<span class='ident'>Decode</span>::<span class='ident'>decode</span>(<span class='ident'>__r</span>));
+                        <span class='kw'>let</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>let_name</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>field_type</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(::<span class='ident'>pod</span>::<span class='ident'>Decode</span>::<span class='ident'>decode</span>(<span class='ident'>__r</span>));
                     ).<span class='ident'>unwrap</span>()
                 ];
 
