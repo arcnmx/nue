@@ -2,7 +2,7 @@
 
 [![travis-badge][]][travis] [![release-badge][]][cargo] [![docs-badge][]][docs] [![license-badge][]][license]
 
-A collection of tools for working with binary data in Rust.
+A collection of tools for working with binary data and POD structs in Rust.
 
 [travis-badge]: https://img.shields.io/travis/arcnmx/nue/master.svg?style=flat-square
 [travis]: https://travis-ci.org/arcnmx/nue
