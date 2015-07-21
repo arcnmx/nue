@@ -1,6 +1,6 @@
 [package]
 name = "nue-macros"
-version = "0.0.4"
+version = "0.0.5"
 authors = ["arcnmx"]
 
 description = "POD and binary data encoding I/O macros"

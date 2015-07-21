@@ -22,8 +22,10 @@
 //! ### Example
 //!
 //! ```
-//! # #![feature(plugin, custom_derive, custom_attribute)] #![plugin(nue_macros)]
-//! # extern crate pod;
+//! #![feature(plugin, custom_derive, custom_attribute)]
+//! #![plugin(nue_macros)]
+//!
+//! extern crate pod;
 //! use pod::{Encode, PodExt};
 //!
 //! # fn main() {
