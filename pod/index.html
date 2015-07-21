@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `pod` crate.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, pod">
+
+    <title>pod - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <section class="sidebar">
+        
+        <p class='location'></p><script>window.sidebarCurrent = {name: 'pod', ty: 'mod', relpath: '../'};</script>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content mod">
+<h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>pod</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-0' class='srclink' href='../src/pod/lib.rs.html#1-48' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>Provides traits that assist with I/O and byte slice conversions involving Plain Old Data.</p>
+
+<h1 id="nightly-/-unstable" class='section-header'><a
+                           href="#nightly-/-unstable">Nightly / Unstable</a></h1>
+<p>The <code>unstable</code> cargo feature can be used for safe automagic derives thanks to OIBIT</p>
+
+<h1 id="example" class='section-header'><a
+                           href="#example">Example</a></h1><pre class='rust rust-example-rendered'>
+<span class='kw'>use</span> <span class='ident'>pod</span>::{<span class='ident'>Pod</span>, <span class='ident'>PodExt</span>, <span class='ident'>Le</span>, <span class='ident'>Be</span>};
+
+<span class='kw'>impl</span> <span class='ident'>Pod</span> <span class='kw'>for</span> <span class='ident'>Data</span> { }
+
+<span class='attribute'>#[<span class='ident'>repr</span>(<span class='ident'>packed</span>)]</span>
+<span class='kw'>struct</span> <span class='ident'>Data</span>(<span class='ident'>u8</span>, <span class='ident'>Le</span><span class='op'>&lt;</span><span class='ident'>u16</span><span class='op'>&gt;</span>, <span class='ident'>Be</span><span class='op'>&lt;</span><span class='ident'>u32</span><span class='op'>&gt;</span>);
+
+<span class='kw'>let</span> <span class='ident'>data</span> <span class='op'>=</span> <span class='ident'>Data</span>(<span class='number'>1</span>, <span class='ident'>Le</span>::<span class='ident'>new</span>(<span class='number'>0x2055</span>), <span class='ident'>Be</span>::<span class='ident'>new</span>(<span class='number'>0xdeadbeef</span>));
+
+<span class='kw'>let</span> <span class='ident'>cmp</span> <span class='op'>=</span> <span class='kw-2'>&amp;</span>[
+    <span class='number'>0x01</span>,
+    <span class='number'>0x55</span>, <span class='number'>0x20</span>,
+    <span class='number'>0xde</span>, <span class='number'>0xad</span>, <span class='number'>0xbe</span>, <span class='number'>0xef</span>,
+];
+
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>cmp</span>, <span class='ident'>data</span>.<span class='ident'>as_slice</span>());
+</pre>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+<table><tr><td><code>pub use endian::{<a class='type' href='../pod/endian/type.Le.html' title='pod::endian::Le'>Le</a>, <a class='type' href='../pod/endian/type.Be.html' title='pod::endian::Be'>Be</a>};</code></td></tr><tr><td><code>pub use code::{<a class='trait' href='../pod/code/trait.Encode.html' title='pod::code::Encode'>Encode</a>, <a class='trait' href='../pod/code/trait.Decode.html' title='pod::code::Decode'>Decode</a>};</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='mod' href='code/index.html'
+                               title='pod::code'>code</a></td>
+                        <td class='docblock short'>
+                             <p>I/O traits for POD and other types.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='mod' href='endian/index.html'
+                               title='pod::endian'>endian</a></td>
+                        <td class='docblock short'>
+                             <p>Containers for primitives</p>
+
+                        </td>
+                    </tr>
+                </table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='trait' href='trait.Pod.html'
+                               title='pod::Pod'>Pod</a></td>
+                        <td class='docblock short'>
+                             <p>A marker trait indicating that a type is Plain Old Data.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='trait' href='trait.PodExt.html'
+                               title='pod::PodExt'>PodExt</a></td>
+                        <td class='docblock short'>
+                             <p>Helper methods for converting Plain Old Data types to/from byte slices and vectors</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='trait' href='trait.PodType.html'
+                               title='pod::PodType'>PodType</a></td>
+                        <td class='docblock short'>
+                             <p>An unsafe marker trait that indicates a type can be used as Plain Old Data.
+Should be used very carefully to mark a type as POD when it contains a non-POD
+member such as a reference.</p>
+
+                        </td>
+                    </tr>
+                </table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard Shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&larrb;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&rarrb;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search Tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code>, <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+            <p>
+                Search functions by type signature (e.g.
+                <code>vec -> usize</code>)
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "pod";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script async src="../search-index.js"></script>
+</body>
+</html>

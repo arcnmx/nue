@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["CStringDecodeOptions","Describes how to decode a `CString`"],["StringDecodeOptions","Describes how to decode a `String`"],["VecDecodeOptions","Describes how to decode a `Vec<T>`"]],"trait":[["Decode","Decodes data from a `Read` into a new value."],["Encode","Encodes an value's binary representation to a `Write`."]]});

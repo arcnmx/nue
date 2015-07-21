@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Error","An error type for reading bytes."]],"trait":[["ReadExact","Extension trait that provides `read_exact` for all `Read` implementations."]]});
