@@ -25,11 +25,13 @@ script:
     - (cd uninitialized && cargo test -v)
     - (cd io && cargo test -v)
     - (cd pod && cargo test -v $FEATURES)
+    - "[ $TRAVIS_RUST_VERSION != nightly ] || (cd macros && cargo test -v && cd doctest && cargo test -v)"
 
 before_deploy:
-    - (cd uninitialized && cargo doc --no-deps -v && cargo package -v)
-    - (cd io && cargo doc --no-deps -v && cargo package -v)
-    - (cd pod && cargo doc --no-deps -v && cargo package -v)
+    - (cd uninitialized && cargo doc --no-deps -v && cargo package -v && cargo publish --token "$CRATES_IO_TOKEN" || true)
+    - (cd io && cargo doc --no-deps -v && cargo package -v && cargo publish --token "$CRATES_IO_TOKEN" || true)
+    - (cd pod && cargo doc --no-deps -v && cargo package -v && cargo publish --token "$CRATES_IO_TOKEN" || true)
+    - (cd macros && cargo doc --no-deps -v && cargo package -v && cargo publish --token "$CRATES_IO_TOKEN" || true)
 
 deploy:
     provider: releases
@@ -38,6 +40,7 @@ deploy:
     file: target/package/uninitialized-$TRAVIS_TAG.crate
     file: target/package/nue-io-$TRAVIS_TAG.crate
     file: target/package/pod-$TRAVIS_TAG.crate
+    file: target/package/nue-macros-$TRAVIS_TAG.crate
     skip_cleanup: true
     on:
         tags: true
@@ -48,6 +51,3 @@ deploy:
 
 after_deploy:
     - .travis/publish_docs.sh "$TRAVIS_TAG"
-    - (cd uninitialized && cargo publish --token "$CRATES_IO_TOKEN")
-    - (cd io && cargo publish --token "$CRATES_IO_TOKEN")
-    - (cd pod && cargo publish --token "$CRATES_IO_TOKEN")

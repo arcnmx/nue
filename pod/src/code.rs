@@ -1,4 +1,4 @@
-use std::io::{self, Read, Write, BufReader, BufRead};
+use std::io::{self, Read, Write, BufReader, BufRead, Cursor};
 use std::ffi::{CString, CStr};
 use ::{PodType, PodExt};
 
@@ -43,6 +43,26 @@ pub trait Encode {
 
     /// Encodes to the `Write` with the provided options
     fn encode_options<W: Write>(&self, w: &mut W, _options: Self::Options) -> io::Result<()> { self.encode(w) }
+
+    /// Encodes to a new byte vector
+    fn encode_vec(&self) -> io::Result<Vec<u8>> {
+        let data = Vec::new();
+        let mut cursor = Cursor::new(data);
+
+        try!(self.encode(&mut cursor));
+
+        Ok(cursor.into_inner())
+    }
+
+    /// Encodes to a new byte vector with the provided options
+    fn encode_vec_options(&self, options: Self::Options) -> io::Result<Vec<u8>> {
+        let data = Vec::new();
+        let mut cursor = Cursor::new(data);
+
+        try!(self.encode_options(&mut cursor, options));
+
+        Ok(cursor.into_inner())
+    }
 }
 
 /// Decodes data from a `Read` into a new value.
@@ -58,6 +78,20 @@ pub trait Decode: Sized {
 
     /// Decodes from the `Read` with the provided options
     fn decode_options<R: Read>(r: &mut R, _options: Self::Options) -> io::Result<Self> { Self::decode(r) }
+
+    /// Decodes from a byte slice
+    fn decode_slice(data: &[u8]) -> io::Result<Self> {
+        let mut cursor = Cursor::new(data);
+
+        Self::decode(&mut cursor)
+    }
+
+    /// Decodes from a byte slice with the provided options
+    fn decode_slice_options(data: &[u8], options: Self::Options) -> io::Result<Self> {
+        let mut cursor = Cursor::new(data);
+
+        Self::decode_options(&mut cursor, options)
+    }
 }
 
 impl<T: Encode> Encode for Option<T> {
@@ -143,6 +177,14 @@ impl Encode for str {
     }
 }
 
+impl<'a> Encode for &'a str {
+    type Options = ();
+
+    fn encode<W: Write>(&self, w: &mut W) -> io::Result<()> {
+        (*self).encode(w)
+    }
+}
+
 impl Decode for CString {
     type Options = CStringDecodeOptions;
 
@@ -181,6 +223,14 @@ impl Encode for CStr {
     }
 }
 
+impl<'a> Encode for &'a CStr {
+    type Options = ();
+
+    fn encode<W: Write>(&self, w: &mut W) -> io::Result<()> {
+        (*self).encode(w)
+    }
+}
+
 impl<T: Decode> Decode for Vec<T> where T::Options: Clone {
     type Options = VecDecodeOptions<T::Options>;
 
@@ -204,6 +254,10 @@ impl<T: Decode> Decode for Vec<T> where T::Options: Clone {
 impl<T: Encode> Encode for Vec<T> where T::Options: Clone {
     type Options = T::Options;
 
+    fn encode<W: Write>(&self, w: &mut W) -> io::Result<()> {
+        (**self).encode(w)
+    }
+
     fn encode_options<W: Write>(&self, w: &mut W, options: Self::Options) -> io::Result<()> {
         (**self).encode_options(w, options)
     }
@@ -226,6 +280,18 @@ impl<T: Encode> Encode for [T] where T::Options: Clone {
         }
 
         Ok(())
+    }
+}
+
+impl<'a, T: Encode> Encode for &'a [T] where T::Options: Clone {
+    type Options = T::Options;
+
+    fn encode<W: Write>(&self, w: &mut W) -> io::Result<()> {
+        (*self).encode(w)
+    }
+
+    fn encode_options<W: Write>(&self, w: &mut W, options: Self::Options) -> io::Result<()> {
+        (*self).encode_options(w, options)
     }
 }
 

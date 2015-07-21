@@ -1,0 +1,22 @@
+[package]
+version = "0.0.0"
+name = "nue_macros_test"
+
+[lib]
+name = "nue_macros_test"
+path = "../src/lib.rs"
+
+[dependencies]
+aster = "0.3"
+quasi = "0.3"
+quasi_macros = "0.3"
+
+[dev-dependencies.nue-io]
+path = "../../io"
+
+[dev-dependencies.pod]
+features = ["unstable"]
+path = "../../pod"
+
+[dev-dependencies.nue-macros]
+path = "../"

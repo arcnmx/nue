@@ -1,26 +1,29 @@
 [package]
-name = "pod"
+name = "nue-macros"
 version = "0.0.3"
 authors = ["arcnmx"]
 
-description = "Plain Old Data (POD) encoding and I/O"
+description = "POD and binary data encoding I/O macros"
 documentation = "http://arcnmx.github.io/nue/pod/"
 repository = "https://github.com/arcnmx/nue"
 readme = "../README.md"
 keywords = ["nue", "pod", "data", "encode", "endian"]
 license = "MIT"
 
-[features]
-unstable = ["resize-slice/unstable"]
+[lib]
+name = "nue_macros"
+plugin = true
 
 [dependencies]
-byteorder = "0.3"
-resize-slice = "0.0"
+aster = "0.3"
+quasi = "0.3"
+quasi_macros = "0.3"
 
-[dependencies.nue-io]
+[dev-dependencies.nue-io]
 version = "0.1"
 path = "../io"
 
-[dependencies.uninitialized]
-version = "0.0"
-path = "../uninitialized"
+[dev-dependencies.pod]
+version = "0.0.3"
+features = ["unstable"]
+path = "../pod"

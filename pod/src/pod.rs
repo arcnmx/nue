@@ -1,4 +1,4 @@
-use std::mem::size_of;
+use std::mem::{size_of, transmute};
 
 use self::unstable::{repr, box_from, box_into};
 
@@ -78,6 +78,30 @@ pub trait PodExt: Sized {
         assert!(slice.len() == size_of::<Self>());
         unsafe {
             box_from(repr(&*box_into(slice)).data as *mut _)
+        }
+    }
+
+    /// Converts a POD type from one to another of the same size.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the two types are not the same size
+    fn map<'a, T: PodType>(&'a self) -> &'a T {
+        assert_eq!(size_of::<Self>(), size_of::<T>());
+        unsafe {
+            transmute(self)
+        }
+    }
+
+    /// Converts a POD type from one to another of the same size.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the two types are not the same size
+    fn map_mut<'a, T: PodType>(&'a mut self) -> &'a mut T {
+        assert_eq!(size_of::<Self>(), size_of::<T>());
+        unsafe {
+            transmute(self)
         }
     }
 }
