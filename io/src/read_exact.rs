@@ -5,7 +5,7 @@ use byteorder;
 pub use byteorder::Error;
 
 /// Extension trait that provides `read_exact` for all `Read` implementations.
-pub trait ReadExact {
+pub trait ReadExactExt {
     /// Reads into the entirety of `buf` or fails with an error.
     ///
     /// The `Read` equivalent of `Write::write_all`.
@@ -13,7 +13,7 @@ pub trait ReadExact {
     fn read_exact(&mut self, buf: &mut [u8]) -> Result<(), Error>;
 }
 
-impl<R: Read> ReadExact for R {
+impl<R: Read> ReadExactExt for R {
     fn read_exact(&mut self, mut buf: &mut [u8]) -> Result<(), Error> {
         while buf.len() > 0 {
             match self.read(buf) {

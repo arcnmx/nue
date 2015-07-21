@@ -3,7 +3,7 @@ use std::ffi::{CString, CStr};
 use ::{PodType, PodExt};
 
 use uninitialized::{uninitialized, UNINITIALIZED};
-use nue_io::ReadExact;
+use nue_io::ReadExactExt;
 
 /// Encodes an value's binary representation to a `Write`.
 ///

@@ -12,10 +12,12 @@ use self::unstable::{repr, box_from, box_into};
 pub trait Pod: Sized { }
 
 /// An unsafe marker trait that indicates a type can be used as Plain Old Data.
+///
 /// Should be used very carefully to mark a type as POD when it contains a non-POD
 /// member such as a reference.
 ///
 /// ## Nightly / Unstable
+///
 /// The `unstable` cargo flag will automatically implement this trait on all applicable types.
 /// Manual unsafe implementation is currently required on the stable and beta channels.
 pub unsafe trait PodType: Pod { }

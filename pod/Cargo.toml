@@ -1,6 +1,6 @@
 [package]
 name = "pod"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["arcnmx"]
 
 description = "Plain Old Data (POD) encoding and I/O"
@@ -18,7 +18,7 @@ byteorder = "0.3"
 resize-slice = "0.0"
 
 [dependencies.nue-io]
-version = "0.0"
+version = "0.1"
 path = "../io"
 
 [dependencies.uninitialized]
