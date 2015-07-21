@@ -1,10 +1,10 @@
 [package]
 name = "nue-macros"
-version = "0.0.3"
+version = "0.0.4"
 authors = ["arcnmx"]
 
 description = "POD and binary data encoding I/O macros"
-documentation = "http://arcnmx.github.io/nue/pod/"
+documentation = "http://arcnmx.github.io/nue/nue_macros/"
 repository = "https://github.com/arcnmx/nue"
 readme = "../README.md"
 keywords = ["nue", "pod", "data", "encode", "endian"]
