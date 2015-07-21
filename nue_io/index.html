@@ -45,16 +45,63 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-0' class='srclink' href='../src/nue_io/lib.rs.html#1-11' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-0' class='srclink' href='../src/nue_io/lib.rs.html#1-24' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Utilities for working with I/O streams.</p>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
-<table><tr><td><code>pub use read_exact::<a class='trait' href='../nue_io/read_exact/trait.ReadExact.html' title='nue_io::read_exact::ReadExact'>ReadExact</a>;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table><tr><td><code>pub use seek_forward::{<a class='trait' href='../nue_io/seek_forward/trait.SeekForward.html' title='nue_io::seek_forward::SeekForward'>SeekForward</a>, <a class='trait' href='../nue_io/seek_forward/trait.SeekRewind.html' title='nue_io::seek_forward::SeekRewind'>SeekRewind</a>};</code></td></tr><tr><td><code>pub use read_exact::<a class='trait' href='../nue_io/read_exact/trait.ReadExactExt.html' title='nue_io::read_exact::ReadExactExt'>ReadExactExt</a>;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
                     <tr class=' module-item'>
                         <td><a class='mod' href='read_exact/index.html'
                                title='nue_io::read_exact'>read_exact</a></td>
                         <td class='docblock short'>
                              <p>An extension for <code>Read</code>ing an exact amount of data.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='mod' href='seek_forward/index.html'
+                               title='nue_io::seek_forward'>seek_forward</a></td>
+                        <td class='docblock short'>
+                             <p>Extensions for seeking around streams that do not normally support it.</p>
+
+                        </td>
+                    </tr>
+                </table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.BufSeeker.html'
+                               title='nue_io::BufSeeker'>BufSeeker</a></td>
+                        <td class='docblock short'>
+                             <p>A buffered reader that allows for seeking within the buffer.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Region.html'
+                               title='nue_io::Region'>Region</a></td>
+                        <td class='docblock short'>
+                             <p>Creates an isolated segment of an underlying stream.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Take.html'
+                               title='nue_io::Take'>Take</a></td>
+                        <td class='docblock short'>
+                             <p>Wraps around a stream to limit the length of the underlying stream.</p>
+
+                        </td>
+                    </tr>
+                </table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='trait' href='trait.SeekAlignExt.html'
+                               title='nue_io::SeekAlignExt'>SeekAlignExt</a></td>
+                        <td class='docblock short'>
+                             <p>An extension trait that will seek to meet a specified alignment.</p>
 
                         </td>
                     </tr>

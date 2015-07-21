@@ -194,6 +194,8 @@
 <span id="152">152</span>
 <span id="153">153</span>
 <span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>mem</span>::<span class='ident'>size_of</span>;
 
@@ -209,10 +211,12 @@
 <span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>Pod</span>: <span class='ident'>Sized</span> { }
 
 <span class='doccomment'>/// An unsafe marker trait that indicates a type can be used as Plain Old Data.</span>
+<span class='doccomment'>///</span>
 <span class='doccomment'>/// Should be used very carefully to mark a type as POD when it contains a non-POD</span>
 <span class='doccomment'>/// member such as a reference.</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// ## Nightly / Unstable</span>
+<span class='doccomment'>///</span>
 <span class='doccomment'>/// The `unstable` cargo flag will automatically implement this trait on all applicable types.</span>
 <span class='doccomment'>/// Manual unsafe implementation is currently required on the stable and beta channels.</span>
 <span class='kw'>pub</span> <span class='kw'>unsafe</span> <span class='kw'>trait</span> <span class='ident'>PodType</span>: <span class='ident'>Pod</span> { }

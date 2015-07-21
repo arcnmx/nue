@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Take","Wraps around a stream to limit the length of the underlying stream."]]});

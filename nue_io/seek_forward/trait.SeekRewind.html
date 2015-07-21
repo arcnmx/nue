@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `ReadExact` trait in crate `nue_io`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, ReadExact">
+    <meta name="description" content="API documentation for the Rust `SeekRewind` trait in crate `nue_io`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, SeekRewind">
 
-    <title>nue_io::read_exact::ReadExact - Rust</title>
+    <title>nue_io::seek_forward::SeekRewind - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='../index.html'>nue_io</a>::<wbr><a href='index.html'>read_exact</a></p><script>window.sidebarCurrent = {name: 'ReadExact', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'><a href='../index.html'>nue_io</a>::<wbr><a href='index.html'>seek_forward</a></p><script>window.sidebarCurrent = {name: 'SeekRewind', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </section>
 
     <nav class="sub">
@@ -41,26 +41,26 @@
     </nav>
 
     <section id='main' class="content trait">
-<h1 class='fqn'><span class='in-band'>Trait <a href='../index.html'>nue_io</a>::<wbr><a href='index.html'>read_exact</a>::<wbr><a class='trait' href=''>ReadExact</a></span><span class='out-of-band'><span id='render-detail'>
+<h1 class='fqn'><span class='in-band'>Trait <a href='../index.html'>nue_io</a>::<wbr><a href='index.html'>seek_forward</a>::<wbr><a class='trait' href=''>SeekRewind</a></span><span class='out-of-band'><span id='render-detail'>
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-14' class='srclink' href='../../src/nue_io/read_exact.rs.html#8-14' title='goto source code'>[src]</a></span></h1>
-<pre class='rust trait'>pub trait ReadExact {
-    fn <a href='#tymethod.read_exact' class='fnname'>read_exact</a>(&amp;mut self, buf: <a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;mut [</a><a href='http://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a><a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, <a class='enum' href='../../nue_io/read_exact/enum.Error.html' title='nue_io::read_exact::Error'>Error</a>&gt;;
-}</pre><div class='docblock'><p>Extension trait that provides <code>read_exact</code> for all <code>Read</code> implementations.</p>
+        </span><a id='src-111' class='srclink' href='../../src/nue_io/seek_forward.rs.html#13-17' title='goto source code'>[src]</a></span></h1>
+<pre class='rust trait'>pub trait SeekRewind {
+    fn <a href='#tymethod.rewind' class='fnname'>rewind</a>(&amp;mut self) -&gt; <a class='type' href='http://doc.rust-lang.org/nightly/std/io/error/type.Result.html' title='std::io::error::Result'>Result</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>&gt;;
+}</pre><div class='docblock'><p>A limited form of seeking that can only be reset from the beginning.</p>
+
+<p>Useful for expressing compressed or cipher streams.</p>
 </div>
             <h2 id='required-methods'>Required Methods</h2>
             <div class='methods'>
-        <h3 id='tymethod.read_exact' class='method stab '><code>fn <a href='#tymethod.read_exact' class='fnname'>read_exact</a>(&amp;mut self, buf: <a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;mut [</a><a href='http://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a><a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, <a class='enum' href='../../nue_io/read_exact/enum.Error.html' title='nue_io::read_exact::Error'>Error</a>&gt;</code></h3><div class='docblock'><p>Reads into the entirety of <code>buf</code> or fails with an error.</p>
-
-<p>The <code>Read</code> equivalent of <code>Write::write_all</code>.
-Retries upon <code>Interrupted</code> errors.</p>
+        <h3 id='tymethod.rewind' class='method stab '><code>fn <a href='#tymethod.rewind' class='fnname'>rewind</a>(&amp;mut self) -&gt; <a class='type' href='http://doc.rust-lang.org/nightly/std/io/error/type.Result.html' title='std::io::error::Result'>Result</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>&gt;</code></h3><div class='docblock'><p>Seeks back to the beginning of the stream.
+Conceptually equivalent to <code>seek(SeekFrom::Start(0))</code>.</p>
 </div></div>
         <h2 id='implementors'>Implementors</h2>
         <ul class='item-list' id='implementors-list'>
     </ul><script type="text/javascript" async
-                              src="../../implementors/nue_io/read_exact/trait.ReadExact.js">
+                              src="../../implementors/nue_io/seek_forward/trait.SeekRewind.js">
                       </script></section>
     <section id='search' class="content hidden"></section>
 

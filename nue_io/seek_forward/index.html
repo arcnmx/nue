@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `read_exact` mod in crate `nue_io`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, read_exact">
+    <meta name="description" content="API documentation for the Rust `seek_forward` mod in crate `nue_io`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, seek_forward">
 
-    <title>nue_io::read_exact - Rust</title>
+    <title>nue_io::seek_forward - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='../index.html'>nue_io</a></p><script>window.sidebarCurrent = {name: 'read_exact', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+        <p class='location'><a href='../index.html'>nue_io</a></p><script>window.sidebarCurrent = {name: 'seek_forward', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
     </section>
 
     <nav class="sub">
@@ -41,29 +41,56 @@
     </nav>
 
     <section id='main' class="content mod">
-<h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>nue_io</a>::<wbr><a class='mod' href=''>read_exact</a></span><span class='out-of-band'><span id='render-detail'>
+<h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>nue_io</a>::<wbr><a class='mod' href=''>seek_forward</a></span><span class='out-of-band'><span id='render-detail'>
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-6' class='srclink' href='../../src/nue_io/read_exact.rs.html#1-29' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'><p>An extension for <code>Read</code>ing an exact amount of data.</p>
-</div><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+        </span><a id='src-89' class='srclink' href='../../src/nue_io/seek_forward.rs.html#1-174' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>Extensions for seeking around streams that do not normally support it.</p>
+</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                     <tr class=' module-item'>
-                        <td><a class='enum' href='enum.Error.html'
-                               title='nue_io::read_exact::Error'>Error</a></td>
+                        <td><a class='struct' href='struct.SeekForwardRead.html'
+                               title='nue_io::seek_forward::SeekForwardRead'>SeekForwardRead</a></td>
                         <td class='docblock short'>
-                             <p>An error type for reading bytes.</p>
+                             <p>A forward seeking wrapper around a <code>Read</code> type.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.SeekForwardRewind.html'
+                               title='nue_io::seek_forward::SeekForwardRewind'>SeekForwardRewind</a></td>
+                        <td class='docblock short'>
+                             <p>A forward seeking wrapper around a <code>Read + SeekRewind</code> type.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.SeekForwardWrite.html'
+                               title='nue_io::seek_forward::SeekForwardWrite'>SeekForwardWrite</a></td>
+                        <td class='docblock short'>
+                             <p>A forward seeking wrapper around a <code>Write</code> type.</p>
 
                         </td>
                     </tr>
                 </table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
 <table>
                     <tr class=' module-item'>
-                        <td><a class='trait' href='trait.ReadExactExt.html'
-                               title='nue_io::read_exact::ReadExactExt'>ReadExactExt</a></td>
+                        <td><a class='trait' href='trait.SeekForward.html'
+                               title='nue_io::seek_forward::SeekForward'>SeekForward</a></td>
                         <td class='docblock short'>
-                             <p>Extension trait that provides <code>read_exact</code> for all <code>Read</code> implementations.</p>
+                             <p>Extension trait that wraps a stream in a new forward seeker.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='trait' href='trait.SeekRewind.html'
+                               title='nue_io::seek_forward::SeekRewind'>SeekRewind</a></td>
+                        <td class='docblock short'>
+                             <p>A limited form of seeking that can only be reset from the beginning.</p>
 
                         </td>
                     </tr>
