@@ -65,6 +65,9 @@
 //!
 //! let data = &[1];
 //! assert!(&Data::decode_slice(data).is_err());
+//!
+//! let data = &[0];
+//! assert!(&Data::decode_slice(data).is_ok());
 //! # }
 //! ```
 //!
