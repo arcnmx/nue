@@ -230,10 +230,10 @@ fn expand_derive_decode(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, anno
             struct_def.fields.iter().enumerate().map(|(i, field)| {
                 let field = &field.node;
                 let (let_name, field_name) = match field.kind {
-                    ast::NamedField(name, _) => (builder.id(format!("__field{}", name)), Some(name)),
+                    ast::NamedField(name, _) => (builder.id(format!("__self_{}", name)), Some(name)),
                     ast::UnnamedField(_) => {
                         tuple_struct = true;
-                        (builder.id(format!("__field{}", i)), None)
+                        (builder.id(format!("__self_{}", i)), None)
                     },
                 };
 
@@ -345,7 +345,7 @@ fn expand_derive_decode(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, anno
 fn field_attrs(cx: &mut ExtCtxt, field: &StructField_, meta_name: &'static str, replace_self: bool) -> Vec<FieldAttribute> {
     fn attr_expr(cx: &mut ExtCtxt, replace_self: bool, value: &str) -> P<ast::Expr> {
         let value = if replace_self {
-            value.replace("self.", "__field")
+            value.replace("self.", "__self_")
         } else {
             value.into()
         };
