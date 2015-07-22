@@ -36,6 +36,16 @@ impl<B: ByteOrder, T: EndianConvert> EndianPrimitive<B, T> {
     pub fn set(&mut self, v: T) {
         self.value = EndianConvert::to::<B>(v)
     }
+
+    /// Gets the inner untransformed value
+    pub fn raw(&self) -> &T {
+        &self.value
+    }
+
+    /// A mutable reference to the inner untransformed value
+    pub fn raw_mut(&mut self) -> &mut T {
+        &mut self.value
+    }
 }
 
 unsafe impl<B, T: Pod> Pod for EndianPrimitive<B, T> { }
