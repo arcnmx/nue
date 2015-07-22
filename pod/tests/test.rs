@@ -3,43 +3,7 @@ extern crate pod;
 use pod::*;
 use std::io::{Cursor, Seek, SeekFrom};
 
-#[test]
-fn pod_definition() {
-    fn pod_test<P: PodType>() { }
-
-    #[cfg(not(feature = "unstable"))]
-    unsafe impl PodType for POD { }
-
-    impl Pod for POD { }
-
-    struct POD {
-        _0: u8,
-        _1: i8,
-        _2: u16,
-        _3: i16,
-        _4: u32,
-        _5: i32,
-        _6: u64,
-        _7: i64,
-        _8: f32,
-        _9: f64,
-        _10: [u32; 4],
-    }
-
-    struct BadPOD {
-        _0: Vec<u8>,
-    }
-    impl Pod for BadPOD { }
-    unsafe impl PodType for BadPOD { }
-
-    pod_test::<POD>();
-    pod_test::<BadPOD>();
-}
-
-#[cfg(not(feature = "unstable"))]
-unsafe impl PodType for POD { }
-
-impl Pod for POD { }
+unsafe impl Pod for POD { }
 
 #[repr(packed)]
 #[derive(Copy, Clone, PartialEq, Debug)]

@@ -3,18 +3,16 @@
 
 //! Provides traits that assist with I/O and byte slice conversions involving Plain Old Data.
 //!
-//! # Nightly / Unstable
+//! # Safety
 //!
-//! The `unstable` cargo feature can be used for safe automagic derives thanks to OIBIT
+//! The `nue-macros` crate can be used for safe automagic derives.
 //!
 //! # Example
 //!
 //! ```
 //! use pod::{Pod, PodExt, Le, Be};
 //!
-//! impl Pod for Data { }
-//! # #[cfg(not(feature = "unstable"))]
-//! # unsafe impl pod::PodType for Data { }
+//! unsafe impl Pod for Data { }
 //!
 //! #[repr(packed)]
 //! struct Data(u8, Le<u16>, Be<u32>);
@@ -45,4 +43,4 @@ pub mod endian;
 
 pub use endian::{Le, Be};
 pub use code::{Encode, Decode};
-pub use pod::{Pod, PodType, PodExt};
+pub use pod::{Pod, PodExt};

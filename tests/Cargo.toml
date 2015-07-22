@@ -1,0 +1,26 @@
+[package]
+name = "nue-tests"
+version = "0.0.0"
+authors = ["arcnmx"]
+build = "build.rs"
+
+[features]
+unstable = ["pod/unstable"]
+
+[build-dependencies]
+syntex = "0.7"
+
+[build-dependencies.nue-codegen]
+path = "../codegen"
+
+[dev-dependencies.nue-io]
+version = "0.1"
+path = "../io"
+
+[dev-dependencies.pod]
+version = "0.1"
+path = "../pod"
+
+[[test]]
+name = "test"
+path = "tests/test.rs"

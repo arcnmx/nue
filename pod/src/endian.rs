@@ -3,7 +3,7 @@ use std::fmt;
 use std::hash::{Hash, Hasher};
 use byteorder::{ByteOrder, LittleEndian, BigEndian};
 use uninitialized::uninitialized;
-use pod::{Pod, PodType};
+use pod::Pod;
 
 /// A type alias for little endian primitives
 pub type Le<T> = EndianPrimitive<LittleEndian, T>;
@@ -38,8 +38,7 @@ impl<B: ByteOrder, T: EndianConvert> EndianPrimitive<B, T> {
     }
 }
 
-impl<B, T: Pod> Pod for EndianPrimitive<B, T> { }
-unsafe impl<B, T: PodType> PodType for EndianPrimitive<B, T> { }
+unsafe impl<B, T: Pod> Pod for EndianPrimitive<B, T> { }
 
 impl<B: ByteOrder, T: Default + EndianConvert> Default for EndianPrimitive<B, T> {
     fn default() -> Self {

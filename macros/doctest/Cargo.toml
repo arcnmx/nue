@@ -6,10 +6,10 @@ name = "nue_macros_test"
 name = "nue_macros_test"
 path = "../src/lib.rs"
 
-[dependencies]
-aster = "0.3"
-quasi = "0.3"
-quasi_macros = "0.3"
+[dependencies.nue-codegen]
+path = "../../codegen"
+default-features = false
+features = ["unstable"]
 
 [dev-dependencies.nue-io]
 path = "../../io"

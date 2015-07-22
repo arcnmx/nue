@@ -1,6 +1,6 @@
 use std::io::{self, Read, Write, BufReader, BufRead, Cursor};
 use std::ffi::{CString, CStr};
-use ::{PodType, PodExt};
+use ::{Pod, PodExt};
 
 use uninitialized::{uninitialized, UNINITIALIZED};
 use nue_io::ReadExactExt;
@@ -92,6 +92,14 @@ pub trait Decode: Sized {
 
         Self::decode_options(&mut cursor, options)
     }
+
+    /// Implement to assert that the decoded contents are valid
+    ///
+    /// # Warning
+    ///
+    /// This takes `&self`, meaning the object is still created before validation occurs.
+    /// Therefore any `Drop` implementations must not assume that the object is valid.
+    fn validate(&self) -> io::Result<()> { Ok(()) }
 }
 
 impl<T: Encode> Encode for Option<T> {
@@ -118,7 +126,7 @@ impl<T: Decode> Decode for Option<T> {
     }
 }
 
-impl<T: PodType> Encode for T {
+impl<T: Pod> Encode for T {
     type Options = ();
 
     fn encode<W: Write>(&self, w: &mut W) -> io::Result<()> {
@@ -126,7 +134,7 @@ impl<T: PodType> Encode for T {
     }
 }
 
-impl<T: PodType> Decode for T {
+impl<T: Pod> Decode for T {
     type Options = ();
 
     fn decode<R: Read>(r: &mut R) -> io::Result<Self> {
@@ -142,15 +150,14 @@ impl Decode for String {
     type Options = StringDecodeOptions;
 
     fn decode_options<R: Read>(r: &mut R, options: Self::Options) -> io::Result<Self> {
-        use std::iter::repeat;
-
         if let Some(len) = options.len {
-            let mut vec = Vec::with_capacity(len);
-            if UNINITIALIZED {
+            let mut vec = if UNINITIALIZED {
+                let mut vec = Vec::with_capacity(len);
                 unsafe { vec.set_len(len); }
+                vec
             } else {
-                vec.extend(repeat(0).take(len));
-            }
+                vec![0; len]
+            };
             try!(r.read_exact(&mut vec[..]));
             String::from_utf8(vec).map_err(|e| io::Error::new(io::ErrorKind::InvalidInput, e))
         } else {
