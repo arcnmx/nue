@@ -8,6 +8,8 @@ A collection of tools for working with binary data and POD structs in Rust.
    transmuting POD structs to and from byte slices.
  - [nue-macros][docs-macros] provides helpers for `pod`, as well
    as a serialization-like library for dealing with binary streams of data.
+ - [nue-codegen][docs-codegen] allows the use of `nue-macros` without
+   syntax extensions on stable Rust.
  - [nue-io][docs] contains various supporting structs and traits for
    readers and writers.
 
@@ -26,5 +28,6 @@ its `#[derive(Pod)]` extension.
 [docs]: http://arcnmx.github.io/nue/nue_io/
 [docs-pod]: http://arcnmx.github.io/nue/pod/
 [docs-macros]: http://arcnmx.github.io/nue/nue_macros/
+[docs-codegen]: http://arcnmx.github.io/nue/nue_codegen/
 [license-badge]: https://img.shields.io/badge/license-MIT-lightgray.svg?style=flat-square
 [license]: https://github.com/arcnmx/nue/blob/master/COPYING
