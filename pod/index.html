@@ -45,18 +45,18 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-0' class='srclink' href='../src/pod/lib.rs.html#1-48' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-0' class='srclink' href='../src/pod/lib.rs.html#1-46' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Provides traits that assist with I/O and byte slice conversions involving Plain Old Data.</p>
 
-<h1 id="nightly-/-unstable" class='section-header'><a
-                           href="#nightly-/-unstable">Nightly / Unstable</a></h1>
-<p>The <code>unstable</code> cargo feature can be used for safe automagic derives thanks to OIBIT</p>
+<h1 id="safety" class='section-header'><a
+                           href="#safety">Safety</a></h1>
+<p>The <code>nue-macros</code> crate can be used for safe automagic derives.</p>
 
 <h1 id="example" class='section-header'><a
                            href="#example">Example</a></h1><pre class='rust rust-example-rendered'>
 <span class='kw'>use</span> <span class='ident'>pod</span>::{<span class='ident'>Pod</span>, <span class='ident'>PodExt</span>, <span class='ident'>Le</span>, <span class='ident'>Be</span>};
 
-<span class='kw'>impl</span> <span class='ident'>Pod</span> <span class='kw'>for</span> <span class='ident'>Data</span> { }
+<span class='kw'>unsafe</span> <span class='kw'>impl</span> <span class='ident'>Pod</span> <span class='kw'>for</span> <span class='ident'>Data</span> { }
 
 <span class='attribute'>#[<span class='ident'>repr</span>(<span class='ident'>packed</span>)]</span>
 <span class='kw'>struct</span> <span class='ident'>Data</span>(<span class='ident'>u8</span>, <span class='ident'>Le</span><span class='op'>&lt;</span><span class='ident'>u16</span><span class='op'>&gt;</span>, <span class='ident'>Be</span><span class='op'>&lt;</span><span class='ident'>u32</span><span class='op'>&gt;</span>);
@@ -106,16 +106,7 @@
                         <td><a class='trait' href='trait.PodExt.html'
                                title='pod::PodExt'>PodExt</a></td>
                         <td class='docblock short'>
-                             <p>Helper methods for converting Plain Old Data types to/from byte slices and vectors</p>
-
-                        </td>
-                    </tr>
-                
-                    <tr class=' module-item'>
-                        <td><a class='trait' href='trait.PodType.html'
-                               title='pod::PodType'>PodType</a></td>
-                        <td class='docblock short'>
-                             <p>An unsafe marker trait that indicates a type can be used as Plain Old Data.</p>
+                             <p>Helper methods for converting POD types to/from byte slices and vectors</p>
 
                         </td>
                     </tr>

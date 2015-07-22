@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["Pod","A marker trait indicating that a type is Plain Old Data."],["PodExt","Helper methods for converting Plain Old Data types to/from byte slices and vectors"],["PodType","An unsafe marker trait that indicates a type can be used as Plain Old Data."]]});
+initSidebarItems({"trait":[["Pod","A marker trait indicating that a type is Plain Old Data."],["PodExt","Helper methods for converting POD types to/from byte slices and vectors"]]});

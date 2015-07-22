@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["register","Registers the plugin for expansion with syntex."]]});

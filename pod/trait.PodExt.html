@@ -45,7 +45,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-22' class='srclink' href='../src/pod/pod.rs.html#26-107' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-22' class='srclink' href='../src/pod/pod.rs.html#14-95' title='goto source code'>[src]</a></span></h1>
 <pre class='rust trait'>pub trait PodExt: <a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a> {
     fn <a href='#method.as_slice' class='fnname'>as_slice</a>&lt;'a&gt;(&amp;'a self) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;'a [</a><a href='http://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a><a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a> { ... }
     fn <a href='#method.mut_slice' class='fnname'>mut_slice</a>&lt;'a&gt;(&amp;'a mut self) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;'a mut [</a><a href='http://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a><a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a> { ... }
@@ -53,9 +53,9 @@
     fn <a href='#method.from_mut_slice' class='fnname'>from_mut_slice</a>&lt;'a&gt;(slice: <a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;'a mut [</a><a href='http://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a><a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>) -&gt; &amp;'a mut Self { ... }
     fn <a href='#method.from_vec' class='fnname'>from_vec</a>(vec: <a class='struct' href='http://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>&gt;) -&gt; <a class='struct' href='http://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>&lt;Self&gt; { ... }
     fn <a href='#method.from_box' class='fnname'>from_box</a>(slice: <a class='struct' href='http://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>[<a href='http://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>]</a>&gt;) -&gt; <a class='struct' href='http://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>&lt;Self&gt; { ... }
-    fn <a href='#method.map' class='fnname'>map</a>&lt;'a, T: <a class='trait' href='../pod/trait.PodType.html' title='pod::PodType'>PodType</a>&gt;(&amp;'a self) -&gt; &amp;'a T { ... }
-    fn <a href='#method.map_mut' class='fnname'>map_mut</a>&lt;'a, T: <a class='trait' href='../pod/trait.PodType.html' title='pod::PodType'>PodType</a>&gt;(&amp;'a mut self) -&gt; &amp;'a mut T { ... }
-}</pre><div class='docblock'><p>Helper methods for converting Plain Old Data types to/from byte slices and vectors</p>
+    fn <a href='#method.map' class='fnname'>map</a>&lt;'a, T: <a class='trait' href='../pod/trait.Pod.html' title='pod::Pod'>Pod</a>&gt;(&amp;'a self) -&gt; &amp;'a T { ... }
+    fn <a href='#method.map_mut' class='fnname'>map_mut</a>&lt;'a, T: <a class='trait' href='../pod/trait.Pod.html' title='pod::Pod'>Pod</a>&gt;(&amp;'a mut self) -&gt; &amp;'a mut T { ... }
+}</pre><div class='docblock'><p>Helper methods for converting POD types to/from byte slices and vectors</p>
 </div>
             <h2 id='provided-methods'>Provided Methods</h2>
             <div class='methods'>
@@ -81,12 +81,12 @@
 <h1 id="panics" class='section-header'><a
                            href="#panics">Panics</a></h1>
 <p>Panics if <code>slice.len()</code> is not the same as the type&#39;s size</p>
-</div><h3 id='method.map' class='method stab '><code>fn <a href='#method.map' class='fnname'>map</a>&lt;'a, T: <a class='trait' href='../pod/trait.PodType.html' title='pod::PodType'>PodType</a>&gt;(&amp;'a self) -&gt; &amp;'a T</code></h3><div class='docblock'><p>Converts a POD type from one to another of the same size.</p>
+</div><h3 id='method.map' class='method stab '><code>fn <a href='#method.map' class='fnname'>map</a>&lt;'a, T: <a class='trait' href='../pod/trait.Pod.html' title='pod::Pod'>Pod</a>&gt;(&amp;'a self) -&gt; &amp;'a T</code></h3><div class='docblock'><p>Converts a POD type from one to another of the same size.</p>
 
 <h1 id="panics" class='section-header'><a
                            href="#panics">Panics</a></h1>
 <p>Panics if the two types are not the same size</p>
-</div><h3 id='method.map_mut' class='method stab '><code>fn <a href='#method.map_mut' class='fnname'>map_mut</a>&lt;'a, T: <a class='trait' href='../pod/trait.PodType.html' title='pod::PodType'>PodType</a>&gt;(&amp;'a mut self) -&gt; &amp;'a mut T</code></h3><div class='docblock'><p>Converts a POD type from one to another of the same size.</p>
+</div><h3 id='method.map_mut' class='method stab '><code>fn <a href='#method.map_mut' class='fnname'>map_mut</a>&lt;'a, T: <a class='trait' href='../pod/trait.Pod.html' title='pod::Pod'>Pod</a>&gt;(&amp;'a mut self) -&gt; &amp;'a mut T</code></h3><div class='docblock'><p>Converts a POD type from one to another of the same size.</p>
 
 <h1 id="panics" class='section-header'><a
                            href="#panics">Panics</a></h1>

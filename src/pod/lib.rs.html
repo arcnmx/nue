@@ -86,26 +86,22 @@
 <span id="44">44</span>
 <span id="45">45</span>
 <span id="46">46</span>
-<span id="47">47</span>
-<span id="48">48</span>
 </pre><pre class='rust '>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>cfg_attr</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;unstable&quot;</span>, <span class='ident'>feature</span>(<span class='ident'>optin_builtin_traits</span>, <span class='ident'>raw</span>, <span class='ident'>box_raw</span>))]</span>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>deny</span>(<span class='ident'>missing_docs</span>)]</span>
 
 <span class='doccomment'>//! Provides traits that assist with I/O and byte slice conversions involving Plain Old Data.</span>
 <span class='doccomment'>//!</span>
-<span class='doccomment'>//! # Nightly / Unstable</span>
+<span class='doccomment'>//! # Safety</span>
 <span class='doccomment'>//!</span>
-<span class='doccomment'>//! The `unstable` cargo feature can be used for safe automagic derives thanks to OIBIT</span>
+<span class='doccomment'>//! The `nue-macros` crate can be used for safe automagic derives.</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! # Example</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! ```</span>
 <span class='doccomment'>//! use pod::{Pod, PodExt, Le, Be};</span>
 <span class='doccomment'>//!</span>
-<span class='doccomment'>//! impl Pod for Data { }</span>
-<span class='doccomment'>//! # #[cfg(not(feature = &quot;unstable&quot;))]</span>
-<span class='doccomment'>//! # unsafe impl pod::PodType for Data { }</span>
+<span class='doccomment'>//! unsafe impl Pod for Data { }</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! #[repr(packed)]</span>
 <span class='doccomment'>//! struct Data(u8, Le&lt;u16&gt;, Be&lt;u32&gt;);</span>
@@ -136,7 +132,7 @@
 
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>endian</span>::{<span class='ident'>Le</span>, <span class='ident'>Be</span>};
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>code</span>::{<span class='ident'>Encode</span>, <span class='ident'>Decode</span>};
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>pod</span>::{<span class='ident'>Pod</span>, <span class='ident'>PodType</span>, <span class='ident'>PodExt</span>};
+<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>pod</span>::{<span class='ident'>Pod</span>, <span class='ident'>PodExt</span>};
 </pre>
 </section>
     <section id='search' class="content hidden"></section>
