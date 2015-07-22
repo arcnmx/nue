@@ -13,12 +13,6 @@ A collection of tools for working with binary data and POD structs in Rust.
  - [nue-io][docs] contains various supporting structs and traits for
    readers and writers.
 
-## Limitations
-
-`pod` makes use of OIBIT to make guarantees about the types involved, so only works on
-unstable Rust. `nue-macros` will soon support stable and provide these guarantees through
-its `#[derive(Pod)]` extension.
-
 
 [travis-badge]: https://img.shields.io/travis/arcnmx/nue/master.svg?style=flat-square
 [travis]: https://travis-ci.org/arcnmx/nue
