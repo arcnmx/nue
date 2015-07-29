@@ -1,5 +1,6 @@
-use std::io::{self, Read, Write, BufRead, Seek, SeekFrom};
-use std::cmp::{min, max};
+use std::io::{self, Read, Write, BufRead};
+use std::cmp::min;
+use seek_forward::{SeekForward, SeekAbsolute, Tell, SeekRewind, SeekEnd, SeekBackward};
 
 /// Creates an isolated segment of an underlying stream.
 ///
@@ -7,17 +8,15 @@ use std::cmp::{min, max};
 /// the region will result in EOF when reading or writing.
 pub struct Region<T> {
     inner: T,
-    pos: Option<u64>,
     start: u64,
     end: u64,
 }
 
 impl<T> Region<T> {
     /// Creates a new `Region` at the specified offsets of `inner`.
-    pub fn new(start: u64, end: u64, inner: T) -> Self {
+    pub fn new(inner: T, start: u64, end: u64) -> Self {
         Region {
             inner: inner,
-            pos: None,
             start: start,
             end: end,
         }
@@ -34,58 +33,51 @@ impl<T> Region<T> {
     }
 }
 
-impl<T: Seek> Region<T> {
+impl<T: Tell + SeekAbsolute> Region<T> {
     fn position(&mut self) -> io::Result<u64> {
-        let pos = match self.pos {
-            Some(pos) => pos,
-            None => try!(self.inner.seek(SeekFrom::Current(0))),
-        };
+        let pos = try!(self.inner.tell());
 
-        let pos = if pos < self.start {
-            try!(self.inner.seek(SeekFrom::Start(self.start)))
+        if pos < self.start {
+            self.inner.seek_absolute(self.start)
         } else {
-            pos
-        };
+            Ok(pos)
+        }
+    }
 
-        self.pos = Some(pos);
+    fn limit(&mut self, len: u64) -> io::Result<u64> {
+        let pos = try!(self.position());
+        let end = self.end;
 
-        Ok(pos - self.start)
+        Ok(limit(pos, end, len))
     }
 }
 
-fn limit(end: u64, pos: u64, len: usize) -> usize {
+fn limit(pos: u64, end: u64, len: u64) -> u64 {
     let limit = if pos >= end {
         0
     } else {
         end - pos
     };
 
-    if limit < len as u64 {
-        limit as usize
-    } else {
-        len
-    }
+    min(limit, len)
 }
 
-impl<T: Read + Seek> Read for Region<T> {
+impl<T: Read + Tell + SeekAbsolute> Read for Region<T> {
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
-        let pos = try!(self.position());
-        let len = limit(self.end, pos, buf.len());
+        let len = try!(self.limit(buf.len() as u64)) as usize;
 
         if len == 0 {
             Ok(0)
         } else {
             let read = try!(self.inner.read(&mut buf[..len]));
-            self.pos = Some(pos.saturating_add(read as u64));
             Ok(read)
         }
     }
 }
 
-impl<T: Write + Seek> Write for Region<T> {
+impl<T: Write + Tell + SeekAbsolute> Write for Region<T> {
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
-        let pos = try!(self.position());
-        let len = limit(self.end, pos, buf.len());
+        let len = try!(self.limit(buf.len() as u64)) as usize;
 
         if len == 0 {
             Ok(0)
@@ -99,38 +91,88 @@ impl<T: Write + Seek> Write for Region<T> {
     }
 }
 
-impl<T: Seek> Seek for Region<T> {
-    fn seek(&mut self, pos: SeekFrom) -> io::Result<u64> {
-        let pos = match pos {
-            SeekFrom::Start(pos) => SeekFrom::Start(min(self.start.saturating_add(pos), self.end)),
-            SeekFrom::End(pos) => SeekFrom::Start(if pos < 0 {
-                self.end.saturating_sub(-pos as u64)
-            } else {
-                self.end.saturating_add(pos as u64)
-            }),
-            SeekFrom::Current(pos) => SeekFrom::Current(pos),
-        };
-        let pos = try!(self.inner.seek(pos));
-        self.pos = Some(pos);
-        Ok(min(max(self.start, pos), self.end) - self.start)
+impl<T: SeekAbsolute> SeekAbsolute for Region<T> {
+    fn seek_absolute(&mut self, pos: u64) -> io::Result<u64> {
+        self.inner.seek_absolute(min(self.start.saturating_add(pos), self.end)).map(|v| v - self.start)
     }
 }
 
-impl<T: BufRead + Seek> BufRead for Region<T> {
+impl<T: SeekForward + Tell + SeekAbsolute> SeekForward for Region<T> {
+    fn seek_forward(&mut self, offset: u64) -> io::Result<u64> {
+        let offset = try!(self.limit(offset));
+        self.inner.seek_forward(offset)
+    }
+}
+
+impl<T: Tell + SeekBackward> SeekBackward for Region<T> {
+    fn seek_backward(&mut self, offset: u64) -> io::Result<u64> {
+        let off = try!(self.inner.tell()).saturating_sub(self.start);;
+        let offset = min(off, offset);
+        self.inner.seek_backward(offset)
+    }
+}
+
+impl<T: SeekAbsolute> SeekRewind for Region<T> {
+    fn seek_rewind(&mut self) -> io::Result<()> {
+        self.inner.seek_absolute(self.start).map(|_| ())
+    }
+}
+
+impl<T: SeekAbsolute> SeekEnd for Region<T> {
+    fn seek_end(&mut self, offset: i64) -> io::Result<u64> {
+        self.inner.seek_absolute((self.end as i64 + offset) as u64).map(|v| v - self.start)
+    }
+}
+
+impl<T: Tell> Tell for Region<T> {
+    fn tell(&mut self) -> io::Result<u64> {
+        self.inner.tell().map(|v| min(self.end, v.saturating_sub(self.start)))
+    }
+}
+
+impl<T: BufRead + Tell + SeekAbsolute> BufRead for Region<T> {
     fn fill_buf(&mut self) -> io::Result<&[u8]> {
         let pos = try!(self.position());
 
         let buf = try!(self.inner.fill_buf());
-        let len = limit(self.end, pos, buf.len());
+        let len = limit(pos, self.end, buf.len() as u64) as usize;
 
-        Ok(&buf[0..len])
+        Ok(&buf[..len])
     }
 
     fn consume(&mut self, amt: usize) {
-        if let Some(pos) = self.pos {
-            let amt = limit(self.end, pos, amt);
-            self.inner.consume(amt);
-            self.pos = Some(pos.saturating_add(amt as u64));
-        }
+        self.inner.consume(amt);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::io::{Cursor, Read};
+    use super::Region;
+    use read_exact::ReadExactExt;
+    use seek_forward::{SeekAll, SeekAbsolute};
+
+    fn data(count: usize) -> Vec<u8> {
+        use std::iter::{repeat};
+        repeat(0).enumerate().map(|(i, _)| i as u8).take(count).collect()
+    }
+
+    #[test]
+    fn region() {
+        let data = data(0x100);
+        let cursor = SeekAll::new(Cursor::new(data.clone()));
+
+        let mut region = Region::new(cursor, 0x40, 0x80);
+        let mut odata = vec![0u8; 0x40];
+        region.read_exact(&mut odata).unwrap();
+        assert_eq!(&odata[..], &data[0x40..0x80]);
+
+        region.seek_absolute(0x20).unwrap();
+        region.read_exact(&mut odata[..0x20]).unwrap();
+        assert_eq!(&odata[..0x20], &data[0x60..0x80]);
+
+        region.seek_absolute(0).unwrap();
+        region.read_exact(&mut odata[..]).unwrap();
+        assert_eq!(&odata[..], &data[0x40..0x80]);
     }
 }

@@ -1,6 +1,6 @@
 [package]
 name = "nue-io"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["arcnmx"]
 
 description = "Binary data encoding and I/O"
@@ -12,4 +12,8 @@ license = "MIT"
 
 [dependencies]
 byteorder = "0.3"
-resize-slice = "0.0"
+resize-slice = "0.1"
+
+[dependencies.uninitialized]
+version = "0.0"
+path = "../uninitialized"

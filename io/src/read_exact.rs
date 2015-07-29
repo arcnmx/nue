@@ -1,6 +1,4 @@
 use std::io::{self, Read};
-use resize_slice::ResizeSlice;
-use byteorder;
 
 pub use byteorder::Error;
 
@@ -11,19 +9,35 @@ pub trait ReadExactExt {
     /// The `Read` equivalent of `Write::write_all`.
     /// Retries upon `Interrupted` errors.
     fn read_exact(&mut self, buf: &mut [u8]) -> Result<(), Error>;
+
+    /// Reads as much as possible into `buf` until EOF.
+    ///
+    /// Retries upon `Interrupted` errors.
+    fn read_exact_eof(&mut self, buf: &mut [u8]) -> io::Result<usize>;
 }
 
 impl<R: Read> ReadExactExt for R {
-    fn read_exact(&mut self, mut buf: &mut [u8]) -> Result<(), Error> {
-        while buf.len() > 0 {
-            match self.read(buf) {
+    #[inline]
+    fn read_exact(&mut self, buf: &mut [u8]) -> Result<(), Error> {
+        match self.read_exact_eof(buf) {
+            Ok(len) if len == buf.len() => Ok(()),
+            Ok(_) => Err(Error::UnexpectedEOF),
+            Err(e) => Err(e.into()),
+        }
+    }
+
+    #[inline]
+    fn read_exact_eof(&mut self, buf: &mut [u8]) -> io::Result<usize> {
+        let mut n = 0;
+        while n < buf.len() {
+            match self.read(&mut buf[n..]) {
                 Err(ref e) if e.kind() == io::ErrorKind::Interrupted => (),
-                Err(e) => return Err(e.into()),
-                Ok(0) => return Err(byteorder::Error::UnexpectedEOF),
-                Ok(len) => buf.resize_from(len),
+                Err(e) => return Err(e),
+                Ok(0) => break,
+                Ok(len) => n += len,
             }
         }
 
-        Ok(())
+        Ok(n)
     }
 }

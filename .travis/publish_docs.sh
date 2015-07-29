@@ -4,6 +4,7 @@ set -eu
 TAG=$1
 
 cd target/doc
+cp -a ../benchmarks.txt ./
 
 git init
 git config user.name "arcnmx"

@@ -1,25 +1,32 @@
 use std::marker::PhantomData;
 use std::fmt;
+use std::cmp::Ordering;
 use std::hash::{Hash, Hasher};
-use byteorder::{ByteOrder, LittleEndian, BigEndian};
+use byteorder::{ByteOrder, LittleEndian, BigEndian, NativeEndian};
 use uninitialized::uninitialized;
+use packed::{Unaligned, Aligned, Packed};
 use pod::Pod;
 
-/// A type alias for little endian primitives
+/// A type alias for unaligned little endian primitives
 pub type Le<T> = EndianPrimitive<LittleEndian, T>;
 
-/// A type alias for big endian primitives
+/// A type alias for unaligned big endian primitives
 pub type Be<T> = EndianPrimitive<BigEndian, T>;
+
+/// A type alias for unaligned native endian primitives
+pub type Native<T> = EndianPrimitive<NativeEndian, T>;
 
 /// A POD container for a primitive that stores a value in the specified endianness
 /// in memory, and transforms on `get`/`set`
-pub struct EndianPrimitive<B, T> {
-    value: T,
+#[repr(packed)]
+pub struct EndianPrimitive<B, T: EndianConvert> {
+    value: T::Unaligned,
     _phantom: PhantomData<*const B>,
 }
 
 impl<B: ByteOrder, T: EndianConvert> EndianPrimitive<B, T> {
     /// Creates a new value
+    #[inline]
     pub fn new(v: T) -> Self {
         EndianPrimitive {
             value: EndianConvert::to::<B>(v),
@@ -28,59 +35,86 @@ impl<B: ByteOrder, T: EndianConvert> EndianPrimitive<B, T> {
     }
 
     /// Transforms to the native value
+    #[inline]
     pub fn get(&self) -> T {
         EndianConvert::from::<B>(&self.value)
     }
 
     /// Transforms from a native value
+    #[inline]
     pub fn set(&mut self, v: T) {
         self.value = EndianConvert::to::<B>(v)
     }
 
     /// Gets the inner untransformed value
-    pub fn raw(&self) -> &T {
+    #[inline]
+    pub fn raw(&self) -> &T::Unaligned {
         &self.value
     }
 
     /// A mutable reference to the inner untransformed value
-    pub fn raw_mut(&mut self) -> &mut T {
+    #[inline]
+    pub fn raw_mut(&mut self) -> &mut T::Unaligned {
         &mut self.value
     }
 }
 
-unsafe impl<B, T: Pod> Pod for EndianPrimitive<B, T> { }
+unsafe impl<B, T: EndianConvert> Pod for EndianPrimitive<B, T> { }
+unsafe impl<B, T: EndianConvert> Unaligned for EndianPrimitive<B, T> { }
+unsafe impl<B, T: EndianConvert> Packed for EndianPrimitive<B, T> { }
 
 impl<B: ByteOrder, T: Default + EndianConvert> Default for EndianPrimitive<B, T> {
+    #[inline]
     fn default() -> Self {
         Self::new(Default::default())
     }
 }
 
 impl<B: ByteOrder, T: EndianConvert> From<T> for EndianPrimitive<B, T> {
+    #[inline]
     fn from(v: T) -> Self {
         Self::new(v)
     }
 }
 
-impl<B, T: fmt::Debug> fmt::Debug for EndianPrimitive<B, T> {
+impl<B: ByteOrder, T: fmt::Debug + EndianConvert> fmt::Debug for EndianPrimitive<B, T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        <T as fmt::Debug>::fmt(&self.value, f)
+        <T as fmt::Debug>::fmt(&self.get(), f)
     }
 }
 
 impl<BRHS: ByteOrder, RHS: EndianConvert, B: ByteOrder, T: EndianConvert + PartialEq<RHS>> PartialEq<EndianPrimitive<BRHS, RHS>> for EndianPrimitive<B, T> {
+    #[inline]
     fn eq(&self, other: &EndianPrimitive<BRHS, RHS>) -> bool {
         self.get().eq(&other.get())
     }
 }
 
-impl<B, T: Hash> Hash for EndianPrimitive<B, T> {
+impl<B: ByteOrder, T: EndianConvert + Eq> Eq for EndianPrimitive<B, T> { }
+
+impl<BRHS: ByteOrder, RHS: EndianConvert, B: ByteOrder, T: EndianConvert + PartialOrd<RHS>> PartialOrd<EndianPrimitive<BRHS, RHS>> for EndianPrimitive<B, T> {
+    #[inline]
+    fn partial_cmp(&self, other: &EndianPrimitive<BRHS, RHS>) -> Option<Ordering> {
+        self.get().partial_cmp(&other.get())
+    }
+}
+
+impl<B: ByteOrder, T: EndianConvert + Ord> Ord for EndianPrimitive<B, T> {
+    #[inline]
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.get().cmp(&other.get())
+    }
+}
+
+impl<B, T: EndianConvert + Hash> Hash for EndianPrimitive<B, T> where T::Unaligned: Hash {
+    #[inline]
     fn hash<H: Hasher>(&self, h: &mut H) {
         self.value.hash(h)
     }
 }
 
-impl<B, T: Clone> Clone for EndianPrimitive<B, T> {
+impl<B, T: EndianConvert> Clone for EndianPrimitive<B, T> {
+    #[inline]
     fn clone(&self) -> Self {
         EndianPrimitive {
             value: self.value.clone(),
@@ -89,33 +123,30 @@ impl<B, T: Clone> Clone for EndianPrimitive<B, T> {
     }
 }
 
-impl<B, T: Copy> Copy for EndianPrimitive<B, T> { }
+impl<B, T: EndianConvert> Copy for EndianPrimitive<B, T> { }
 
 /// Describes a value that can be converted to and from a specified byte order.
-pub trait EndianConvert {
+pub trait EndianConvert: Aligned {
     /// Converts a value from `B`
-    fn from<B: ByteOrder>(&self) -> Self;
+    fn from<B: ByteOrder>(&Self::Unaligned) -> Self;
 
     /// Converts a value to `B`
-    fn to<B: ByteOrder>(self) -> Self;
+    fn to<B: ByteOrder>(self) -> Self::Unaligned;
 }
 
 macro_rules! endian_impl {
     ($t:ty: $s:expr => $r:ident, $w:ident) => {
         impl EndianConvert for $t {
-            fn from<B: ByteOrder>(&self) -> Self {
-                use std::mem::transmute;
-                B::$r(unsafe { transmute::<_, &[u8; $s]>(self) })
+            #[inline]
+            fn from<B: ByteOrder>(s: &Self::Unaligned) -> Self {
+                B::$r(s)
             }
 
-            fn to<B: ByteOrder>(self) -> Self {
-                use std::mem::transmute;
-
-                unsafe {
-                    let mut s = uninitialized();
-                    B::$w(transmute::<_, &mut [u8; $s]>(&mut s), self);
-                    s
-                }
+            #[inline]
+            fn to<B: ByteOrder>(self) -> Self::Unaligned {
+                let mut s: Self::Unaligned = unsafe { uninitialized() };
+                B::$w(&mut s, self);
+                s
             }
         }
     };
@@ -130,14 +161,38 @@ endian_impl!(u64: 8 => read_u64, write_u64);
 endian_impl!(f32: 4 => read_f32, write_f32);
 endian_impl!(f64: 8 => read_f64, write_f64);
 
+impl EndianConvert for bool {
+    #[inline]
+    fn from<B: ByteOrder>(s: &Self::Unaligned) -> Self {
+        *s as u8 != 0
+    }
+
+    #[inline]
+    fn to<B: ByteOrder>(self) -> Self::Unaligned {
+        if self as u8 != 0 { true } else { false }
+    }
+}
+
 #[test]
 fn endian_size() {
     use std::mem::size_of;
-    type B = BigEndian;
+    #[cfg(feature = "unstable")]
+    use std::mem::align_of;
+    #[cfg(not(feature = "unstable"))]
+    use std::mem::min_align_of as align_of;
+
+    type B = NativeEndian;
 
     assert_eq!(size_of::<EndianPrimitive<B, i16>>(), 2);
     assert_eq!(size_of::<EndianPrimitive<B, i32>>(), 4);
     assert_eq!(size_of::<EndianPrimitive<B, i64>>(), 8);
     assert_eq!(size_of::<EndianPrimitive<B, f32>>(), 4);
     assert_eq!(size_of::<EndianPrimitive<B, f64>>(), 8);
+
+    assert_eq!(align_of::<EndianPrimitive<B, bool>>(), 1);
+    assert_eq!(align_of::<EndianPrimitive<B, i16>>(), 1);
+    assert_eq!(align_of::<EndianPrimitive<B, i32>>(), 1);
+    assert_eq!(align_of::<EndianPrimitive<B, i64>>(), 1);
+    assert_eq!(align_of::<EndianPrimitive<B, f32>>(), 1);
+    assert_eq!(align_of::<EndianPrimitive<B, f64>>(), 1);
 }

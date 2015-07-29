@@ -1,27 +1,31 @@
-use std::io::{self, Read, BufRead, BufReader, Seek, SeekFrom};
+use std::io::{self, Read, BufRead};
+use std::cmp::min;
+use resize_slice::SliceExt;
+use seek_forward::{SeekForward, SeekBackward, SeekRewind, SeekAbsolute, SeekEnd, Tell};
+
+const DEFAULT_BUF_SIZE: usize = 0x400 * 0x40;
 
 /// A buffered reader that allows for seeking within the buffer.
 ///
 /// Unlike `std::io::BufReader`, seeking doesn't invalidate the buffer.
 pub struct BufSeeker<T> {
-    read: BufReader<T>,
-    pos: Option<u64>,
+    inner: T,
+    buf: Vec<u8>,
+    pos: usize,
 }
 
-impl<T: Read> BufSeeker<T> {
+impl<T> BufSeeker<T> {
     /// Creates a new `BufSeeker` around the specified `Read`.
     pub fn new(inner: T) -> Self {
-        BufSeeker {
-            read: BufReader::new(inner),
-            pos: None,
-        }
+        BufSeeker::with_capacity(DEFAULT_BUF_SIZE, inner)
     }
 
     /// Creates a `BufSeeker` with a specific buffer size.
     pub fn with_capacity(cap: usize, inner: T) -> Self {
         BufSeeker {
-            read: BufReader::with_capacity(cap, inner),
-            pos: None,
+            inner: inner,
+            buf: Vec::with_capacity(cap),
+            pos: 0,
         }
     }
 
@@ -29,60 +33,106 @@ impl<T: Read> BufSeeker<T> {
     ///
     /// Note that any leftover data in the buffer will be lost.
     pub fn into_inner(self) -> T {
-        self.read.into_inner()
+        self.inner
     }
 }
 
-impl<T: Seek> Seek for BufSeeker<T> {
-    fn seek(&mut self, pos: SeekFrom) -> io::Result<u64> {
-        use std::mem::transmute;
-
-        struct Repr<T> {
-            _inner: T,
-            _buf: Vec<u8>,
-            pos: usize,
-            cap: usize,
+impl<T: SeekForward> SeekForward for BufSeeker<T> {
+    #[inline]
+    fn seek_forward(&mut self, offset: u64) -> io::Result<u64> {
+        let pos = (self.buf.len() - self.pos) as u64;
+        if offset <= pos as u64 {
+            self.pos += offset as usize;
+            Ok(offset)
+        } else {
+            let offset = offset - pos;
+            let res = try!(self.inner.seek_forward(offset));
+            self.pos = self.buf.len();
+            Ok(res + pos)
         }
+    }
+}
 
-        let repr: &mut Repr<T> = unsafe { transmute(&mut self.read) };
-        match (&mut self.pos, pos) {
-            (&mut Some(ref mut self_pos), SeekFrom::Current(pos)) if (pos < 0 && -pos as u64 <= repr.pos as u64) || pos < (repr.cap - repr.pos) as i64 => {
-                if pos < 0 {
-                    repr.pos -= -pos as usize;
-                    *self_pos -= -pos as u64;
-                } else {
-                    repr.pos += pos as usize;
-                    *self_pos += pos as u64;
-                }
-
-                Ok(*self_pos)
-            },
-            (self_pos, pos) => {
-                let pos = try!(self.read.seek(pos));
-                repr.pos = 0;
-                repr.cap = 0;
-                *self_pos = Some(pos);
-                Ok(pos)
-            },
+impl<T: SeekBackward> SeekBackward for BufSeeker<T> {
+    #[inline]
+    fn seek_backward(&mut self, offset: u64) -> io::Result<u64> {
+        let pos = self.pos as u64;
+        if offset <= pos {
+            self.pos -= offset as usize;
+            Ok(offset)
+        } else {
+            let offset = offset + pos;
+            let res = try!(self.inner.seek_backward(offset));
+            self.pos = self.buf.len();
+            Ok(res - pos)
         }
+    }
+}
+
+impl<T: SeekRewind> SeekRewind for BufSeeker<T> {
+    #[inline]
+    fn seek_rewind(&mut self) -> io::Result<()> {
+        try!(self.inner.seek_rewind());
+        self.pos = self.buf.len();
+        Ok(())
+    }
+}
+
+impl<T: Tell> Tell for BufSeeker<T> {
+    #[inline]
+    fn tell(&mut self) -> io::Result<u64> {
+        self.inner.tell().map(|v| v - (self.buf.len() - self.pos) as u64)
+    }
+}
+
+impl<T: SeekAbsolute> SeekAbsolute for BufSeeker<T> {
+    #[inline]
+    fn seek_absolute(&mut self, pos: u64) -> io::Result<u64> {
+        let pos = try!(self.inner.seek_absolute(pos));
+        self.pos = self.buf.len();
+        Ok(pos)
+    }
+}
+
+impl<T: SeekEnd> SeekEnd for BufSeeker<T> {
+    #[inline]
+    fn seek_end(&mut self, offset: i64) -> io::Result<u64> {
+        let pos = try!(self.inner.seek_end(offset));
+        self.pos = self.buf.len();
+        Ok(pos)
     }
 }
 
 impl<T: Read> Read for BufSeeker<T> {
+    #[inline]
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
-        let read = try!(self.read.read(buf));
-        self.pos.as_mut().map(|v| *v += read as u64);
-        Ok(read)
+        if self.pos >= self.buf.len() && buf.len() >= self.buf.capacity() {
+            self.inner.read(buf)
+        } else {
+            let read = buf.copy_from(try!(self.fill_buf()));
+            self.consume(read);
+            Ok(read)
+        }
     }
 }
 
-impl<T: BufRead> BufRead for BufSeeker<T> {
+impl<T: Read> BufRead for BufSeeker<T> {
+    #[inline]
     fn fill_buf(&mut self) -> io::Result<&[u8]> {
-        self.read.fill_buf()
+        use std::slice::from_raw_parts_mut;
+
+        if self.pos >= self.buf.len() {
+            unsafe {
+                let buf = from_raw_parts_mut(self.buf.as_mut_ptr(), self.buf.capacity());
+                self.buf.set_len(try!(self.inner.read(buf)));
+                self.pos = 0;
+            }
+        }
+        Ok(&self.buf[self.pos..])
     }
 
+    #[inline]
     fn consume(&mut self, amt: usize) {
-        self.read.consume(amt);
-        self.pos.as_mut().map(|v| *v += amt as u64);
+        self.pos = min(self.pos + amt, self.buf.len());
     }
 }

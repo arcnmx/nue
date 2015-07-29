@@ -5,7 +5,7 @@ authors = ["arcnmx"]
 build = "build.rs"
 
 [features]
-unstable = ["pod/unstable"]
+unstable = ["pod/unstable", "nue/unstable"]
 
 [build-dependencies]
 syntex = "0.7"
@@ -13,12 +13,10 @@ syntex = "0.7"
 [build-dependencies.nue-codegen]
 path = "../codegen"
 
-[dev-dependencies.nue-io]
-version = "0.1"
-path = "../io"
+[dev-dependencies.nue]
+path = "../"
 
 [dev-dependencies.pod]
-version = "0.1"
 path = "../pod"
 
 [[test]]

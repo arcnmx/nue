@@ -1,0 +1,38 @@
+[package]
+name = "nue"
+version = "0.2.0"
+authors = ["arcnmx"]
+
+description = "I/O, POD, and misc. binary data encoding"
+documentation = "http://arcnmx.github.io/nue/nue/"
+repository = "https://github.com/arcnmx/nue"
+readme = "README.md"
+keywords = ["nue", "pod", "data", "encode", "endian"]
+license = "MIT"
+
+[lib]
+name = "nue"
+path = "src.rs"
+
+[[bench]]
+name = "nue"
+path = "bench.rs"
+
+[features]
+unstable = ["pod/unstable", "packed/unstable"]
+
+[dependencies.nue-io]
+version = "0.2"
+path = "io"
+
+[dependencies.pod]
+version = "0.2"
+path = "pod"
+
+[dependencies.packed]
+version = "0.2"
+path = "packed"
+
+[dev-dependencies.nue-macros]
+version = "0.2"
+path = "macros"

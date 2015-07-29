@@ -1,5 +1,6 @@
-use std::io::{self, Read, Write, Seek, SeekFrom};
+use std::io::{self, Read, Write};
 use std::cmp::min;
+use seek_forward::{SeekForward, Tell};
 
 /// Wraps around a stream to limit the length of the underlying stream.
 ///
@@ -54,16 +55,16 @@ impl<T: Read> Read for Take<T> {
     }
 }
 
-impl<T: Seek> Seek for Take<T> {
-    fn seek(&mut self, pos: SeekFrom) -> io::Result<u64> {
-        let offset = match pos {
-            SeekFrom::Current(offset) if offset >= 0 => min(self.limit, offset as u64),
-            _ => return Err(io::Error::new(io::ErrorKind::InvalidInput, "only forward seeking is allowed"))
-        };
+impl<T: SeekForward> SeekForward for Take<T> {
+    fn seek_forward(&mut self, offset: u64) -> io::Result<u64> {
+        let res = try!(self.inner.seek_forward(min(offset, self.limit)));
+        self.limit -= res;
+        Ok(res)
+    }
+}
 
-        let seek = try!(self.inner.seek(SeekFrom::Current(offset as i64)));
-        self.limit -= offset;
-
-        Ok(seek)
+impl<T: Tell> Tell for Take<T> {
+    fn tell(&mut self) -> io::Result<u64> {
+        self.inner.tell()
     }
 }

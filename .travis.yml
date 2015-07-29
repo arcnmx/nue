@@ -23,28 +23,34 @@ matrix:
 
 script:
     - (cd uninitialized && cargo test -v)
+    - (cd packed && cargo test -v $FEATURES)
     - (cd io && cargo test -v)
     - (cd pod && cargo test -v $FEATURES)
+    - (cargo build -v $FEATURES)
     - (cd codegen && cargo test)
     - (cd tests && cargo test -v $FEATURES)
     - "[ $TRAVIS_RUST_VERSION != nightly ] || (cd macros && cargo test -v && cd doctest && cargo test -v)"
 
 before_deploy:
     - (cd uninitialized && cargo doc --no-deps -v && cargo package -v && cargo publish --token "$CRATES_IO_TOKEN" || true)
+    - (cd packed && cargo doc --no-deps -v && cargo package -v && cargo publish --token "$CRATES_IO_TOKEN" || true)
     - (cd io && cargo doc --no-deps -v && cargo package -v && cargo publish --token "$CRATES_IO_TOKEN" || true)
     - (cd pod && cargo doc --no-deps -v && cargo package -v && cargo publish --token "$CRATES_IO_TOKEN" || true)
     - (cd codegen && cargo doc --no-deps -v && cargo package -v && cargo publish --token "$CRATES_IO_TOKEN" || true)
     - (cd macros && cargo doc --no-deps -v && cargo package -v && cargo publish --token "$CRATES_IO_TOKEN" || true)
+    - (cargo doc --no-deps -v && cargo package -v && cargo publish --token "$CRATES_IO_TOKEN" || true)
+    - cargo bench -q > $CARGO_TARGET_DIR/benchmarks.txt
 
 deploy:
     provider: releases
     api_key:
         secure: "Y7yRI4sQySToVsYtwVRMEIcd7CD0nuh1MarSfeQp6GKbvY5j8MUyYbZk8CvvlHD8bI/kicvb1/jxNY+SBhIgxNWXDtxIg8Qv9B8dpSfXctHyxXJkRlHZZZHfrkiPmHtWW8S1PCkfRgpP5wHIu1d5V6hAY+kQo4eiAm4bZY6njap3by25NiyWCZmgFkMPsoRyZGE0d2Vm28e2xHyENjeDvjwk8KjarS7I4h9JEq8xV7xQp1LGlOLqDbgcZPECFS9AzMsodmPBcG38TU7DTkq2gam6lNTluVjaOEvyfrTlTTAtbh+uWelCNzUVQgHHcPXHllZpkxSdnEoZx99y4oLHK91X2qryBypJ8kqOFHfweys3DvL/Mm/520IaNA0JpjdMai9DXuS+glz988DPiWK25vdHSiIq0JsAJVQ6binZvTFpsZfjDlDjC51Gxa7VCzwTisFikw60llI346wBYgFOKmQgXZp/CRr0buEmc3Rs5TsdbtkM7GTTDorfeVJdK9HwjwEU87mpudcR5/kQqRhG4pPElv2N4VwBrhh0YgNupVaDpQhDwexQv6AvwTCMTTwHYeOEOCtBdj90XyyI0uNcET5O11Pybmc4eH4PBM/HsvuYjJFVWNVG+kQQilkAk0AYGxOBVKR0hJmaumPGLOF/Q/YYJUZIqG0N1wQV9WHgGjo="
-    file: target/package/uninitialized-$TRAVIS_TAG.crate
+    file: target/package/packed-$TRAVIS_TAG.crate
     file: target/package/nue-io-$TRAVIS_TAG.crate
     file: target/package/pod-$TRAVIS_TAG.crate
     file: target/package/nue-codegen-$TRAVIS_TAG.crate
     file: target/package/nue-macros-$TRAVIS_TAG.crate
+    file: target/package/nue-$TRAVIS_TAG.crate
     skip_cleanup: true
     on:
         tags: true

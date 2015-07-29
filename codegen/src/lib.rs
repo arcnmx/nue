@@ -38,7 +38,7 @@ fn derive_type<'a>(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, annotatab
     Some((builder, item, generics, ty, ty_path))
 }
 
-fn expand_derive_pod_repr_packed(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, annotatable: Annotatable) -> Annotatable {
+fn expand_packed(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, annotatable: Annotatable) -> Annotatable {
     let item = match annotatable {
         Annotatable::Item(item) => item,
         _ => {
@@ -50,11 +50,35 @@ fn expand_derive_pod_repr_packed(cx: &mut ExtCtxt, span: Span, meta_item: &MetaI
     let builder = AstBuilder::new().span(span);
 
     let repr = builder.attr().list("repr").words(["packed"].iter()).build();
-    let derive_pod_repr = builder.attr().word("derive_Pod");
+    let packed = builder.attr().word("__nue_packed");
+    let derive_packed = builder.attr().word("derive_Packed");
 
     Annotatable::Item(item.map(|mut item| {
+        attr::mark_used(&packed);
         item.attrs.push(repr);
-        item.attrs.push(derive_pod_repr);
+        item.attrs.push(packed);
+        item.attrs.push(derive_packed);
+        item
+    }))
+}
+
+fn expand_derive_pod_packed(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, annotatable: Annotatable) -> Annotatable {
+    let item = match annotatable {
+        Annotatable::Item(item) => item,
+        _ => {
+            cx.span_err(meta_item.span, "`derive` may only be applied to structs or enums");
+            return annotatable;
+        }
+    };
+
+    let builder = AstBuilder::new().span(span);
+
+    let packed = builder.attr().word("packed");
+    let derive_pod = builder.attr().word("derive_Pod");
+
+    Annotatable::Item(item.map(|mut item| {
+        item.attrs.push(packed);
+        item.attrs.push(derive_pod);
         item
     }))
 }
@@ -66,7 +90,7 @@ fn expr_is_false(expr: &P<ast::Expr>) -> bool {
     }
 }
 
-fn expand_derive_pod_repr(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, annotatable: &Annotatable, push: &mut FnMut(Annotatable)) {
+fn expand_derive_packed(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, annotatable: &Annotatable, push: &mut FnMut(Annotatable)) {
     let (_, item, generics, ty, _) = if let Some(ret) = derive_type(cx, span, meta_item, annotatable) {
         ret
     } else {
@@ -74,10 +98,59 @@ fn expand_derive_pod_repr(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, an
     };
 
     if !item.attrs.iter().any(|a| match &a.node.value.node {
-        &MetaItem_::MetaList(ref name, _) if *name == "repr" => true,
+        &MetaItem_::MetaWord(ref name) if *name == "__nue_packed" || *name == "packed" => true,
         _ => false,
     }) {
-        cx.span_err(meta_item.span, "POD types require #[repr(packed)]");
+        cx.span_err(meta_item.span, "packed types require #[packed]");
+        return;
+    }
+
+    let assertions = match item.node {
+        ast::ItemStruct(ref struct_def, _) => {
+            struct_def.fields.iter().map(|field| {
+                let ty = &field.node.ty;
+                quote_stmt!(cx, assert::<$ty>();).unwrap()
+            }).collect::<Vec<_>>()
+        },
+        _ => {
+            cx.span_err(meta_item.span, "packed types must be structs");
+            return
+        },
+    };
+
+    let where_clause = &generics.where_clause;
+
+    let impl_item = quote_item!(cx,
+        #[automatically_derived]
+        unsafe impl $generics ::nue::Packed for $ty $where_clause {
+            fn __assert_unaligned() {
+                fn assert<T: ::nue::Unaligned>() { }
+
+                $assertions
+            }
+        }
+    ).unwrap();
+    push(Annotatable::Item(impl_item));
+
+    let impl_item = quote_item!(cx,
+        #[automatically_derived]
+        unsafe impl $generics ::nue::Unaligned for $ty $where_clause { }
+    ).unwrap();
+    push(Annotatable::Item(impl_item));
+}
+
+fn expand_derive_pod(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, annotatable: &Annotatable, push: &mut FnMut(Annotatable)) {
+    let (_, item, generics, ty, _) = if let Some(ret) = derive_type(cx, span, meta_item, annotatable) {
+        ret
+    } else {
+        return
+    };
+
+    if !item.attrs.iter().any(|a| match &a.node.value.node {
+        &MetaItem_::MetaWord(ref name) if *name == "__nue_packed" || *name == "packed" => true,
+        _ => false,
+    }) {
+        cx.span_err(meta_item.span, "POD types require #[packed]");
         return;
     }
 
@@ -131,7 +204,7 @@ fn expand_derive_encode(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, anno
                 let mut cond = None;
 
                 let statement = quote_stmt!(cx,
-                    let _ = try!(::pod::Encode::encode($expr, __w));
+                    let _ = try!(::nue::Encode::encode($expr, __w));
                 ).unwrap();
                 let mut statement = vec![statement];
 
@@ -141,15 +214,15 @@ fn expand_derive_encode(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, anno
                         FieldAttribute::Default(_) => (),
                         FieldAttribute::Align(expr) => {
                             needs_seek = true;
-                            statement.insert(0, quote_stmt!(cx, let _ = try!(::nue_io::SeekAlignExt::align_to(__w, $expr)); ).unwrap());
+                            statement.insert(0, quote_stmt!(cx, let _ = try!(::nue::SeekAlignExt::align_to(__w, $expr)); ).unwrap());
                         },
                         FieldAttribute::Skip(expr) => {
                             needs_seek = true;
                             statement.insert(0, quote_stmt!(cx,
-                                let _ = try!(::std::io::Seek::seek(__w, ::std::io::SeekFrom::Current($expr)));
+                                let _ = try!(::nue::SeekForward::seek_forward(__w, $expr));
                             ).unwrap());
                         },
-                        FieldAttribute::Limit(expr) => statement.insert(0, quote_stmt!(cx, let __w = &mut ::nue_io::Take::new(::std::io::Write::by_ref(__w), $expr); ).unwrap()),
+                        FieldAttribute::Limit(expr) => statement.insert(0, quote_stmt!(cx, let __w = &mut ::nue::Take::new(::std::borrow::BorrowMut::borrow_mut(__w), $expr); ).unwrap()),
                         FieldAttribute::Consume(expr) => statement.push(quote_stmt!(cx,
                             if $expr {
                                 let _ = try!(match ::std::io::copy(&mut ::std::io::repeat(0), __w) {
@@ -190,17 +263,17 @@ fn expand_derive_encode(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, anno
 
     let needs_seek = if needs_seek {
         quote_stmt!(cx,
-            let __w = &mut ::nue_io::SeekForward::seek_forward(__w);
+            let __w = &mut ::nue::ReadWriteTell::new(::nue::SeekForwardWrite::new(::nue::SeekAll::new(__w)));
         )
     } else {
-        quote_stmt!(cx, {})
+        quote_stmt!(cx, let __w = &mut ::nue::SeekAll::new(__w);)
     }.unwrap();
 
     let where_clause = &generics.where_clause;
 
     let impl_item = quote_item!(cx,
         #[automatically_derived]
-        impl $generics ::pod::Encode for $ty $where_clause {
+        impl $generics ::nue::Encode for $ty $where_clause {
             type Options = ();
 
             fn encode<__W: ::std::io::Write>(&self, __w: &mut __W) -> ::std::io::Result<()> {
@@ -230,10 +303,10 @@ fn expand_derive_decode(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, anno
             struct_def.fields.iter().enumerate().map(|(i, field)| {
                 let field = &field.node;
                 let (let_name, field_name) = match field.kind {
-                    ast::NamedField(name, _) => (builder.id(format!("__self_{}", name)), Some(name)),
+                    ast::NamedField(name, _) => (builder.id(format!("__self_0{}", name)), Some(name)),
                     ast::UnnamedField(_) => {
                         tuple_struct = true;
-                        (builder.id(format!("__self_{}", i)), None)
+                        (builder.id(format!("__self_0{}", i)), None)
                     },
                 };
 
@@ -241,7 +314,7 @@ fn expand_derive_decode(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, anno
                 let field_type = &field.ty;
 
                 let statement = quote_stmt!(cx,
-                    let $let_name: $field_type = try!(::pod::Decode::decode(__r));
+                    let $let_name: $field_type = try!(::nue::Decode::decode(__r));
                 ).unwrap();
                 let mut statement = vec![statement];
 
@@ -251,15 +324,15 @@ fn expand_derive_decode(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, anno
                         FieldAttribute::Default(expr) => cond_default = Some(expr),
                         FieldAttribute::Align(expr) => {
                             needs_seek = true;
-                            statement.insert(0, quote_stmt!(cx, let _ = try!(::nue_io::SeekAlignExt::align_to(__r, $expr)); ).unwrap());
+                            statement.insert(0, quote_stmt!(cx, let _ = try!(::nue::SeekAlignExt::align_to(__r, $expr)); ).unwrap());
                         },
                         FieldAttribute::Skip(expr) => {
                             needs_seek = true;
                             statement.insert(0, quote_stmt!(cx,
-                                let _ = try!(::std::io::Seek::seek(__r, ::std::io::SeekFrom::Current($expr)));
+                                let _ = try!(::nue::SeekForward::seek_forward(__r, $expr));
                             ).unwrap());
                         },
-                        FieldAttribute::Limit(expr) => statement.insert(0, quote_stmt!(cx, let __r = &mut ::nue_io::Take::new(::std::io::Read::by_ref(__r), $expr); ).unwrap()),
+                        FieldAttribute::Limit(expr) => statement.insert(0, quote_stmt!(cx, let __r = &mut ::nue::Take::new(::std::borrow::BorrowMut::borrow_mut(__r), $expr); ).unwrap()),
                         FieldAttribute::Consume(expr) => statement.push(quote_stmt!(cx,
                             if $expr {
                                 let _ = try!(::std::io::copy(__r, &mut ::std::io::sink()));
@@ -308,10 +381,10 @@ fn expand_derive_decode(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, anno
 
     let needs_seek = if needs_seek {
         quote_stmt!(cx,
-            let __r = &mut ::nue_io::SeekForward::seek_forward(__r);
+            let __r = &mut ::nue::ReadWriteTell::new(::nue::SeekForwardRead::new(::nue::SeekAll::new(__r)));
         )
     } else {
-        quote_stmt!(cx, {})
+        quote_stmt!(cx, let __r = &mut ::nue::SeekAll::new(__r);)
     }.unwrap();
 
     let result = if tuple_struct {
@@ -324,7 +397,7 @@ fn expand_derive_decode(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, anno
 
     let impl_item = quote_item!(cx,
         #[automatically_derived]
-        impl $generics ::pod::Decode for $ty $where_clause {
+        impl $generics ::nue::Decode for $ty $where_clause {
             type Options = ();
 
             fn decode<__R: ::std::io::Read>(__r: &mut __R) -> ::std::io::Result<Self> {
@@ -332,7 +405,7 @@ fn expand_derive_decode(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, anno
                 $decoders
                 let __result = $result;
 
-                let _ = try!(::pod::Decode::validate(&__result));
+                let _ = try!(::nue::Decode::validate(&__result));
 
                 Ok(__result)
             }
@@ -345,7 +418,7 @@ fn expand_derive_decode(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, anno
 fn field_attrs(cx: &mut ExtCtxt, field: &StructField_, meta_name: &'static str, replace_self: bool) -> Vec<FieldAttribute> {
     fn attr_expr(cx: &mut ExtCtxt, replace_self: bool, value: &str) -> P<ast::Expr> {
         let value = if replace_self {
-            value.replace("self.", "__self_")
+            value.replace("self.", "__self_0")
         } else {
             value.into()
         };

@@ -40,8 +40,10 @@ pub fn register(reg: &mut syntex::Registry) {
     reg.add_attr("feature(custom_derive)");
     reg.add_attr("feature(custom_attribute)");
 
-    reg.add_modifier("derive_PodPacked", expand_derive_pod_repr_packed);
-    reg.add_decorator("derive_Pod", expand_derive_pod_repr);
+    reg.add_modifier("packed", expand_packed);
+    reg.add_modifier("derive_PodPacked", expand_derive_pod_packed);
+    reg.add_decorator("derive_Packed", expand_derive_packed);
+    reg.add_decorator("derive_Pod", expand_derive_pod);
     reg.add_decorator("derive_NueEncode", expand_derive_encode);
     reg.add_decorator("derive_NueDecode", expand_derive_decode);
 
@@ -54,7 +56,8 @@ pub fn register(reg: &mut syntex::Registry) {
         impl fold::Folder for StripAttributeFolder {
             fn fold_attribute(&mut self, attr: ast::Attribute) -> Option<ast::Attribute> {
                 match attr.node.value.node {
-                    ast::MetaList(ref n, _) if *n == "nue" || *n == "nue_enc" || *n == "nue_dec" => { return None; }
+                    ast::MetaWord(ref n) if *n == "__nue_packed" => { return None; },
+                    ast::MetaList(ref n, _) if *n == "nue" || *n == "nue_enc" || *n == "nue_dec" => { return None; },
                     _ => {}
                 }
 
@@ -74,16 +77,30 @@ pub fn register(reg: &mut syntex::Registry) {
 #[cfg(not(feature = "with-syntex"))]
 pub fn register(reg: &mut rustc::plugin::Registry) {
     reg.register_syntax_extension(
+        syntax::parse::token::intern("packed"),
+        syntax::ext::base::MultiModifier(
+            Box::new(expand_packed)
+        )
+    );
+
+    reg.register_syntax_extension(
+        syntax::parse::token::intern("derive_Packed"),
+        syntax::ext::base::MultiDecorator(
+            Box::new(expand_derive_packed)
+        )
+    );
+
+    reg.register_syntax_extension(
         syntax::parse::token::intern("derive_PodPacked"),
         syntax::ext::base::MultiModifier(
-            Box::new(expand_derive_pod_repr_packed)
+            Box::new(expand_derive_pod_packed)
         )
     );
 
     reg.register_syntax_extension(
         syntax::parse::token::intern("derive_Pod"),
         syntax::ext::base::MultiDecorator(
-            Box::new(expand_derive_pod_repr)
+            Box::new(expand_derive_pod)
         )
     );
 

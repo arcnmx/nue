@@ -1,4 +1,4 @@
-#![cfg_attr(feature = "unstable", feature(optin_builtin_traits, raw, box_raw))]
+#![cfg_attr(feature = "unstable", feature(box_raw))]
 #![deny(missing_docs)]
 
 //! Provides traits that assist with I/O and byte slice conversions involving Plain Old Data.
@@ -11,12 +11,19 @@
 //!
 //! ```
 //! use pod::{Pod, PodExt, Le, Be};
+//! # #[cfg(not(feature = "unstable"))]
+//! # mod stable {
+//! # use pod::packed::{Unaligned, Packed};
+//! # unsafe impl Packed for super::Data { }
+//! # unsafe impl Unaligned for super::Data { }
+//! # }
 //!
 //! unsafe impl Pod for Data { }
 //!
 //! #[repr(packed)]
 //! struct Data(u8, Le<u16>, Be<u32>);
 //!
+//! # fn main() {
 //! let data = Data(1, Le::new(0x2055), Be::new(0xdeadbeef));
 //!
 //! let cmp = &[
@@ -26,11 +33,13 @@
 //! ];
 //!
 //! assert_eq!(cmp, data.as_slice());
+//! # }
 //!
 //! ```
 
 extern crate uninitialized;
 extern crate byteorder;
+extern crate packed as nue_packed;
 extern crate nue_io;
 
 mod pod;
@@ -41,6 +50,9 @@ pub mod code;
 /// Containers for primitives
 pub mod endian;
 
-pub use endian::{Le, Be};
+pub use endian::{Le, Be, Native};
 pub use code::{Encode, Decode};
 pub use pod::{Pod, PodExt};
+
+/// Re-export the `packed` crate
+pub use nue_packed as packed;

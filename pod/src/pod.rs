@@ -1,11 +1,38 @@
-use std::mem::{size_of, transmute};
+use std::mem::{size_of, transmute, uninitialized};
+use std::slice::{from_raw_parts, from_raw_parts_mut};
+use packed::{Unaligned, Aligned};
+use uninitialized;
 
-use self::unstable::{repr, box_from, box_into};
+use self::unstable::{box_from, box_into};
 
 /// A marker trait indicating that a type is Plain Old Data.
 ///
 /// It is unsafe to `impl` this manually, use `#[derive(Pod)]` instead.
 pub unsafe trait Pod: Sized {
+    /// Safely borrows the aligned value mutably
+    ///
+    /// See also: `Aligned::as_aligned_mut`
+    #[inline]
+    fn mut_aligned<T: Pod + Aligned<Unaligned=Self>>(&mut self) -> Option<&mut T> where Self: Copy + Unaligned {
+        unsafe { T::as_aligned_mut(self) }
+    }
+
+    /// Safely borrows the unaligned value mutably
+    ///
+    /// See also: `Aligned::as_unaligned_mut`
+    #[inline]
+    fn mut_unaligned<T: Copy + Unaligned>(s: &mut T) -> Option<&mut Self> where Self: Aligned<Unaligned=T> {
+        unsafe { Self::as_aligned_mut(s) }
+    }
+
+    /// Safely converts an unaligned value to its aligned equivalent
+    ///
+    /// See also: `Aligned::from_unaligned`
+    #[inline]
+    fn aligned<T: Copy + Unaligned>(s: T) -> Self where Self: Aligned<Unaligned=T> {
+        unsafe { Self::from_unaligned(s) }
+    }
+
     #[doc(hidden)]
     fn __assert_pod() { }
 }
@@ -13,16 +40,14 @@ pub unsafe trait Pod: Sized {
 /// Helper methods for converting POD types to/from byte slices and vectors
 pub trait PodExt: Sized {
     /// Borrows the POD as a byte slice
+    #[inline]
     fn as_slice<'a>(&'a self) -> &'a [u8] {
-        use std::slice::from_raw_parts;
-
         unsafe { from_raw_parts(self as *const Self as *const u8, size_of::<Self>()) }
     }
 
     /// Borrows the POD as a mutable byte slice
+    #[inline]
     fn mut_slice<'a>(&'a mut self) -> &'a mut [u8] {
-        use std::slice::from_raw_parts_mut;
-
         unsafe { from_raw_parts_mut(self as *mut Self as *mut u8, size_of::<Self>()) }
     }
 
@@ -31,10 +56,10 @@ pub trait PodExt: Sized {
     /// # Panics
     ///
     /// Panics if `slice.len()` is not the same as the type's size
-    fn from_slice<'a>(slice: &'a [u8]) -> &'a Self {
-        let slice = repr(slice);
-        assert_eq!(slice.len, size_of::<Self>());
-        unsafe { &*(slice.data as *const _) }
+    #[inline]
+    fn from_slice<'a>(slice: &'a [u8]) -> &'a Self where Self: Unaligned {
+        assert_eq!(slice.len(), size_of::<Self>());
+        unsafe { &*(slice.as_ptr() as *const _) }
     }
 
     /// Borrows a mutable instance of the POD from a mutable byte slice
@@ -42,10 +67,10 @@ pub trait PodExt: Sized {
     /// # Panics
     ///
     /// Panics if `slice.len()` is not the same as the type's size
-    fn from_mut_slice<'a>(slice: &'a mut [u8]) -> &'a mut Self {
-        let slice = repr(slice);
-        assert_eq!(slice.len, size_of::<Self>());
-        unsafe { &mut *(slice.data as *mut _) }
+    #[inline]
+    fn from_mut_slice<'a>(slice: &'a mut [u8]) -> &'a mut Self where Self: Unaligned {
+        assert_eq!(slice.len(), size_of::<Self>());
+        unsafe { &mut *(slice.as_mut_ptr() as *mut _) }
     }
 
     /// Converts a byte vector to a boxed instance of the POD type
@@ -53,7 +78,8 @@ pub trait PodExt: Sized {
     /// # Panics
     ///
     /// Panics if `vec.len()` is not the same as the type's size
-    fn from_vec(vec: Vec<u8>) -> Box<Self> {
+    #[inline]
+    fn from_vec(vec: Vec<u8>) -> Box<Self> where Self: Unaligned {
         Self::from_box(vec.into_boxed_slice())
     }
 
@@ -62,10 +88,27 @@ pub trait PodExt: Sized {
     /// # Panics
     ///
     /// Panics if `slice.len()` is not the same as the type's size
-    fn from_box(slice: Box<[u8]>) -> Box<Self> {
+    #[inline]
+    fn from_box(slice: Box<[u8]>) -> Box<Self> where Self: Unaligned {
         assert!(slice.len() == size_of::<Self>());
         unsafe {
-            box_from(repr(&*box_into(slice)).data as *mut _)
+            box_from((&mut *box_into(slice)).as_mut_ptr() as *mut _)
+        }
+    }
+
+    /// Converts a boxed POD to a byte vector
+    #[inline]
+    fn to_vec(self: Box<Self>) -> Vec<u8> {
+        self.to_boxed_slice().into_vec()
+    }
+
+    /// Converts a boxed POD to a boxed slice
+    #[inline]
+    fn to_boxed_slice(self: Box<Self>) -> Box<[u8]> {
+        let ptr = box_into(self);
+        unsafe {
+            let ptr = from_raw_parts_mut(ptr as *mut u8, size_of::<Self>());
+            box_from(ptr)
         }
     }
 
@@ -74,7 +117,8 @@ pub trait PodExt: Sized {
     /// # Panics
     ///
     /// Panics if the two types are not the same size
-    fn map<'a, T: Pod>(&'a self) -> &'a T {
+    #[inline]
+    fn map<'a, T: Pod + Unaligned>(&'a self) -> &'a T where Self: Unaligned {
         assert_eq!(size_of::<Self>(), size_of::<T>());
         unsafe {
             transmute(self)
@@ -86,11 +130,24 @@ pub trait PodExt: Sized {
     /// # Panics
     ///
     /// Panics if the two types are not the same size
-    fn map_mut<'a, T: Pod>(&'a mut self) -> &'a mut T {
+    #[inline]
+    fn map_mut<'a, T: Pod + Unaligned>(&'a mut self) -> &'a mut T where Self: Unaligned {
         assert_eq!(size_of::<Self>(), size_of::<T>());
         unsafe {
             transmute(self)
         }
+    }
+
+    /// Generates a new uninitialized instance of a POD type.
+    #[inline]
+    unsafe fn uninitialized() -> Self {
+        uninitialized()
+    }
+
+    /// Creates a new zeroed instance of a POD type.
+    #[inline]
+    fn zeroed() -> Self {
+        unsafe { uninitialized::uninitialized() }
     }
 }
 
@@ -113,7 +170,7 @@ unsafe impl<T> Pod for *const T { }
 unsafe impl<T> Pod for *mut T { }
 
 macro_rules! pod_def {
-    ($([T; $x:expr]),*) => {
+    ($($x:expr),*) => {
         $(
             unsafe impl<T: Pod> Pod for [T; $x] { }
         )*
@@ -121,18 +178,15 @@ macro_rules! pod_def {
 }
 
 unsafe impl<T: Pod> Pod for (T,) { }
-pod_def! { [T; 0], [T; 1], [T; 2], [T; 3], [T; 4], [T; 5], [T; 6], [T; 7], [T; 8], [T; 9] }
-pod_def! { [T; 10], [T; 11], [T; 12], [T; 13], [T; 14], [T; 15], [T; 16], [T; 17], [T; 18], [T; 19] }
-pod_def! { [T; 20], [T; 21], [T; 22], [T; 23], [T; 24], [T; 25], [T; 26], [T; 27], [T; 28], [T; 29] }
-pod_def! { [T; 30], [T; 31], [T; 32] }
+pod_def! { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f }
+pod_def! { 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f }
+pod_def! { 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f }
+pod_def! { 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f }
+pod_def! { 0x40 }
 
 #[cfg(feature = "unstable")]
 mod unstable {
-    use std::raw::{Repr, Slice};
-
-    pub fn repr<T>(t: &[T]) -> Slice<T> { t.repr() }
-
-    pub unsafe fn box_from<T>(raw: *mut T) -> Box<T> { Box::from_raw(raw) }
+    pub unsafe fn box_from<T: ?Sized>(raw: *mut T) -> Box<T> { Box::from_raw(raw) }
     pub fn box_into<T: ?Sized>(b: Box<T>) -> *mut T { Box::into_raw(b) }
 }
 
@@ -140,13 +194,6 @@ mod unstable {
 mod unstable {
     use std::mem::transmute;
 
-    pub struct Slice<T> {
-        pub data: *const T,
-        pub len: usize,
-    }
-
-    pub fn repr<T>(t: &[T]) -> Slice<T> { unsafe { transmute(t) } }
-
-    pub unsafe fn box_from<T>(raw: *mut T) -> Box<T> { transmute(raw) }
+    pub unsafe fn box_from<T: ?Sized>(raw: *mut T) -> Box<T> { transmute(raw) }
     pub fn box_into<T: ?Sized>(b: Box<T>) -> *mut T { unsafe { transmute(b) } }
 }

@@ -4,6 +4,28 @@
 //!
 //! # Attributes
 //!
+//! ## `#[packed]`
+//!
+//! Applies `#[repr(Packed)]` while also ensuring that all members safely allow
+//! unaligned access.
+//!
+//! ```
+//! #![feature(plugin, custom_derive, custom_attribute)]
+//! #![plugin(nue_macros)]
+//!
+//! extern crate nue;
+//! use nue::{Pod, Aligned, Un};
+//!
+//! # fn main() {
+//! #[packed]
+//! struct Data(u8, Un<u32>);
+//!
+//! let data = Data(5, 5.unaligned());
+//! assert_eq!(data.0, 5u8);
+//! assert_eq!(u32::aligned(data.1), 5u32);
+//! # }
+//! ```
+//!
 //! ## `#[derive(Pod)]`
 //!
 //! Marks a struct as `pod::Pod`. It must only contain other `Pod` members, and
@@ -11,7 +33,7 @@
 //!
 //! ### `#[derive(PodPacked)]`
 //!
-//! Marks a struct as `pod::Pod`, and also applies the `#[repr(packed)]`
+//! Marks a struct as `pod::Pod`, and also applies the `#[packed]`
 //! attribute to the type.
 //!
 //! ### Example
@@ -21,11 +43,12 @@
 //! #![plugin(nue_macros)]
 //!
 //! extern crate pod;
-//! use pod::{Encode, PodExt};
+//! extern crate nue;
+//! use pod::PodExt;
 //!
 //! # fn main() {
 //! #[derive(Pod)]
-//! #[repr(packed)]
+//! #[packed]
 //! struct Data(u8);
 //!
 //! assert_eq!(Data(5).as_slice(), &[5]);
@@ -34,7 +57,7 @@
 //!
 //! ## `#[derive(NueEncode, NueDecode)]`
 //!
-//! Implements `pod::Encode` and `pod::Decode` on the struct.
+//! Implements `nue::Encode` and `nue::Decode` on the struct.
 //! All fields must also implement `Encode` / `Decode` (or be skipped by a `nue` attribute).
 //!
 //! ### `#[nue(...)]`, `#[nue_enc(...)]`, `#[nue_dec(...)]`
@@ -53,8 +76,8 @@
 //!
 //! ```
 //! # #![feature(plugin, custom_derive, custom_attribute)] #![plugin(nue_macros)]
-//! # extern crate pod; extern crate nue_io;
-//! use pod::Decode;
+//! # extern crate nue;
+//! use nue::Decode;
 //!
 //! # fn main() {
 //! #[derive(NueDecode)]
@@ -77,8 +100,8 @@
 //!
 //! ```
 //! # #![feature(plugin, custom_derive, custom_attribute)] #![plugin(nue_macros)]
-//! # extern crate pod; extern crate nue_io;
-//! use pod::Encode;
+//! # extern crate nue;
+//! use nue::Encode;
 //!
 //! # fn main() {
 //! #[derive(NueEncode)]
@@ -100,8 +123,8 @@
 //!
 //! ```
 //! # #![feature(plugin, custom_derive, custom_attribute)] #![plugin(nue_macros)]
-//! # extern crate pod; extern crate nue_io;
-//! use pod::Encode;
+//! # extern crate nue;
+//! use nue::Encode;
 //!
 //! # fn main() {
 //! #[derive(NueEncode)]
@@ -125,8 +148,8 @@
 //!
 //! ```
 //! # #![feature(plugin, custom_derive, custom_attribute)] #![plugin(nue_macros)]
-//! # extern crate pod; extern crate nue_io;
-//! use pod::Encode;
+//! # extern crate nue;
+//! use nue::Encode;
 //!
 //! # fn main() {
 //! #[derive(NueEncode)]
@@ -149,8 +172,8 @@
 //!
 //! ```
 //! # #![feature(plugin, custom_derive, custom_attribute)] #![plugin(nue_macros)]
-//! # extern crate pod; extern crate nue_io;
-//! use pod::Decode;
+//! # extern crate nue;
+//! use nue::Decode;
 //!
 //! # fn main() {
 //! #[derive(NueDecode, PartialEq, Debug)]
@@ -174,8 +197,8 @@
 //!
 //! ```
 //! # #![feature(plugin, custom_derive, custom_attribute)] #![plugin(nue_macros)]
-//! # extern crate pod; extern crate nue_io;
-//! use pod::Decode;
+//! # extern crate nue;
+//! use nue::Decode;
 //!
 //! # fn main() {
 //! #[derive(NueDecode)]
@@ -195,8 +218,8 @@
 //!
 //! ```
 //! # #![feature(plugin, custom_derive, custom_attribute)] #![plugin(nue_macros)]
-//! # extern crate pod; extern crate nue_io;
-//! use pod::Decode;
+//! # extern crate nue;
+//! use nue::Decode;
 //! use std::ffi::CString;
 //!
 //! # fn main() {

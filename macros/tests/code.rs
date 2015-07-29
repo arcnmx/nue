@@ -1,6 +1,6 @@
 use std::io::Cursor;
 use std::mem::size_of;
-use pod::{Encode, Decode};
+use nue::{Encode, Decode, Un, Aligned};
 
 #[derive(NueEncode, NueDecode, PartialEq, Debug)]
 struct _PodTest;
@@ -10,7 +10,7 @@ fn encode_decode() {
     #[derive(PodPacked)]
     struct POD1 {
         _0: u8,
-        _1: u16,
+        _1: Un<u16>,
     }
 
     const UNIT: &'static () = &();
@@ -18,15 +18,15 @@ fn encode_decode() {
     #[derive(NueEncode, NueDecode, PartialEq, Debug)]
     struct POD2 {
         _0: u8,
-        #[nue(align = "1", skip = "0", limit = "2", consume = "true", cond = "self._0 == 1")]
-        _1: u16,
+        #[nue(align = "1", skip = "0", limit = "2", consume = "true", cond = "self._0 == 1", default = "0u16.unaligned()")]
+        _1: Un<u16>,
         #[nue(cond = "false", default = "UNIT")]
         _2: &'static (),
         _3: (),
     }
 
-    let pod1 = POD1 { _0: 1, _1: 2 };
-    let pod2 = POD2 { _0: 1, _1: 2, _2: UNIT, _3: () };
+    let pod1 = POD1 { _0: 1, _1: 2u16.unaligned() };
+    let pod2 = POD2 { _0: 1, _1: 2u16.unaligned(), _2: UNIT, _3: () };
 
     let buffer1 = Vec::new();
     let mut buffer1 = Cursor::new(buffer1);

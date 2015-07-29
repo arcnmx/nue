@@ -1,6 +1,6 @@
 [package]
 name = "nue-codegen"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["arcnmx"]
 
 description = "Stable POD and binary data encoding I/O macros"
@@ -26,8 +26,8 @@ quasi_codegen = { verision = "0.3", optional = true }
 syntex = { version = "0.7", optional = true }
 
 [dependencies]
-aster = { version = "0.3", default-features = false }
+aster = { version = "0.4", default-features = false }
 quasi = { verision = "0.3", default-features = false }
 quasi_macros = { version = "0.3", optional = true }
 syntex = { version = "0.7", optional = true }
-syntex_syntax = { version = "0.8", optional = true }
+syntex_syntax = { version = "0.9", optional = true }

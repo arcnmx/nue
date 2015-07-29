@@ -11,12 +11,13 @@ path = "../../codegen"
 default-features = false
 features = ["unstable"]
 
-[dev-dependencies.nue-io]
-path = "../../io"
-
 [dev-dependencies.pod]
 features = ["unstable"]
 path = "../../pod"
+
+[dev-dependencies.nue]
+features = ["unstable"]
+path = "../../"
 
 [dev-dependencies.nue-macros]
 path = "../"

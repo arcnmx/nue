@@ -1,6 +1,6 @@
 [package]
 name = "pod"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["arcnmx"]
 
 description = "Plain Old Data (POD) encoding and I/O"
@@ -11,15 +11,19 @@ keywords = ["nue", "pod", "data", "encode", "endian"]
 license = "MIT"
 
 [features]
-unstable = ["resize-slice/unstable"]
+unstable = ["resize-slice/unstable", "packed/unstable"]
 
 [dependencies]
 byteorder = "0.3"
 resize-slice = "0.0"
 
 [dependencies.nue-io]
-version = "0.1"
+version = "0.2"
 path = "../io"
+
+[dependencies.packed]
+version = "0.2"
+path = "../packed"
 
 [dependencies.uninitialized]
 version = "0.0"
