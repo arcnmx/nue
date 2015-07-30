@@ -45,11 +45,29 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-0' class='srclink' href='../src/nue_macros/lib.rs.html#1-221' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-0' class='srclink' href='../src/nue_macros/lib.rs.html#1-247' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p><code>#[derive(..)]</code> attributes for POD and binary encodable types.</p>
 
 <h1 id="attributes" class='section-header'><a
                            href="#attributes">Attributes</a></h1>
+<h2 id="#[packed]" class='section-header'><a
+                           href="##[packed]"><code>#[packed]</code></a></h2>
+<p>Applies <code>#[repr(Packed)]</code> while also ensuring that all members safely allow
+unaligned access.</p>
+<pre class='rust rust-example-rendered'>
+<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>feature</span>(<span class='ident'>plugin</span>, <span class='ident'>custom_derive</span>, <span class='ident'>custom_attribute</span>)]</span>
+<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>plugin</span>(<span class='ident'>nue_macros</span>)]</span>
+
+<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>nue</span>;
+<span class='kw'>use</span> <span class='ident'>nue</span>::{<span class='ident'>Pod</span>, <span class='ident'>Aligned</span>, <span class='ident'>Un</span>};
+
+<span class='attribute'>#[<span class='ident'>packed</span>]</span>
+<span class='kw'>struct</span> <span class='ident'>Data</span>(<span class='ident'>u8</span>, <span class='ident'>Un</span><span class='op'>&lt;</span><span class='ident'>u32</span><span class='op'>&gt;</span>);
+
+<span class='kw'>let</span> <span class='ident'>data</span> <span class='op'>=</span> <span class='ident'>Data</span>(<span class='number'>5</span>, <span class='number'>5</span>.<span class='ident'>unaligned</span>());
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>data</span>.<span class='number'>0</span>, <span class='number'>5u8</span>);
+<span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>u32</span>::<span class='ident'>aligned</span>(<span class='ident'>data</span>.<span class='number'>1</span>), <span class='number'>5u32</span>);</pre>
+
 <h2 id="#[derive(pod)]" class='section-header'><a
                            href="##[derive(pod)]"><code>#[derive(Pod)]</code></a></h2>
 <p>Marks a struct as <code>pod::Pod</code>. It must only contain other <code>Pod</code> members, and
@@ -57,7 +75,7 @@ the type must be packed.</p>
 
 <h3 id="#[derive(podpacked)]" class='section-header'><a
                            href="##[derive(podpacked)]"><code>#[derive(PodPacked)]</code></a></h3>
-<p>Marks a struct as <code>pod::Pod</code>, and also applies the <code>#[repr(packed)]</code>
+<p>Marks a struct as <code>pod::Pod</code>, and also applies the <code>#[packed]</code>
 attribute to the type.</p>
 
 <h3 id="example" class='section-header'><a
@@ -66,17 +84,18 @@ attribute to the type.</p>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>plugin</span>(<span class='ident'>nue_macros</span>)]</span>
 
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>pod</span>;
-<span class='kw'>use</span> <span class='ident'>pod</span>::{<span class='ident'>Encode</span>, <span class='ident'>PodExt</span>};
+<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>nue</span>;
+<span class='kw'>use</span> <span class='ident'>pod</span>::<span class='ident'>PodExt</span>;
 
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Pod</span>)]</span>
-<span class='attribute'>#[<span class='ident'>repr</span>(<span class='ident'>packed</span>)]</span>
+<span class='attribute'>#[<span class='ident'>packed</span>]</span>
 <span class='kw'>struct</span> <span class='ident'>Data</span>(<span class='ident'>u8</span>);
 
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>Data</span>(<span class='number'>5</span>).<span class='ident'>as_slice</span>(), <span class='kw-2'>&amp;</span>[<span class='number'>5</span>]);</pre>
 
 <h2 id="#[derive(nueencode,-nuedecode)]" class='section-header'><a
                            href="##[derive(nueencode,-nuedecode)]"><code>#[derive(NueEncode, NueDecode)]</code></a></h2>
-<p>Implements <code>pod::Encode</code> and <code>pod::Decode</code> on the struct.
+<p>Implements <code>nue::Encode</code> and <code>nue::Decode</code> on the struct.
 All fields must also implement <code>Encode</code> / <code>Decode</code> (or be skipped by a <code>nue</code> attribute).</p>
 
 <h3 id="#[nue(...)],-#[nue_enc(...)],-#[nue_dec(...)]" class='section-header'><a
@@ -93,7 +112,7 @@ differently depending on which is defined first.</p>
                            href="#assert"><code>assert</code></a></h4>
 <p>Asserts that some property is true before continuing with the operation.</p>
 <pre class='rust rust-example-rendered'>
-<span class='kw'>use</span> <span class='ident'>pod</span>::<span class='ident'>Decode</span>;
+<span class='kw'>use</span> <span class='ident'>nue</span>::<span class='ident'>Decode</span>;
 
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>NueDecode</span>)]</span>
 <span class='kw'>struct</span> <span class='ident'>Data</span>(
@@ -102,13 +121,16 @@ differently depending on which is defined first.</p>
 );
 
 <span class='kw'>let</span> <span class='ident'>data</span> <span class='op'>=</span> <span class='kw-2'>&amp;</span>[<span class='number'>1</span>];
-<span class='macro'>assert</span><span class='macro'>!</span>(<span class='kw-2'>&amp;</span><span class='ident'>Data</span>::<span class='ident'>decode_slice</span>(<span class='ident'>data</span>).<span class='ident'>is_err</span>());</pre>
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='kw-2'>&amp;</span><span class='ident'>Data</span>::<span class='ident'>decode_slice</span>(<span class='ident'>data</span>).<span class='ident'>is_err</span>());
+
+<span class='kw'>let</span> <span class='ident'>data</span> <span class='op'>=</span> <span class='kw-2'>&amp;</span>[<span class='number'>0</span>];
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='kw-2'>&amp;</span><span class='ident'>Data</span>::<span class='ident'>decode_slice</span>(<span class='ident'>data</span>).<span class='ident'>is_ok</span>());</pre>
 
 <h4 id="align" class='section-header'><a
                            href="#align"><code>align</code></a></h4>
 <p>Aligns the field to an offset of the given multiple.</p>
 <pre class='rust rust-example-rendered'>
-<span class='kw'>use</span> <span class='ident'>pod</span>::<span class='ident'>Encode</span>;
+<span class='kw'>use</span> <span class='ident'>nue</span>::<span class='ident'>Encode</span>;
 
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>NueEncode</span>)]</span>
 <span class='kw'>struct</span> <span class='ident'>Data</span>(
@@ -125,7 +147,7 @@ differently depending on which is defined first.</p>
                            href="#skip"><code>skip</code></a></h4>
 <p>Discards the provided amount of bytes before encoding/decoding the value.</p>
 <pre class='rust rust-example-rendered'>
-<span class='kw'>use</span> <span class='ident'>pod</span>::<span class='ident'>Encode</span>;
+<span class='kw'>use</span> <span class='ident'>nue</span>::<span class='ident'>Encode</span>;
 
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>NueEncode</span>)]</span>
 <span class='kw'>struct</span> <span class='ident'>Data</span>(
@@ -144,7 +166,7 @@ differently depending on which is defined first.</p>
 <code>Default::default()</code> will be used.
 <code>false</code> is a static guarantee that the field will be ignored.</p>
 <pre class='rust rust-example-rendered'>
-<span class='kw'>use</span> <span class='ident'>pod</span>::<span class='ident'>Encode</span>;
+<span class='kw'>use</span> <span class='ident'>nue</span>::<span class='ident'>Encode</span>;
 
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>NueEncode</span>)]</span>
 <span class='kw'>struct</span> <span class='ident'>Data</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>(
@@ -162,7 +184,7 @@ differently depending on which is defined first.</p>
                            href="#default"><code>default</code></a></h4>
 <p>Determines the default value to be used if <code>cond</code> evaluates to false.</p>
 <pre class='rust rust-example-rendered'>
-<span class='kw'>use</span> <span class='ident'>pod</span>::<span class='ident'>Decode</span>;
+<span class='kw'>use</span> <span class='ident'>nue</span>::<span class='ident'>Decode</span>;
 
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>NueDecode</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Debug</span>)]</span>
 <span class='kw'>struct</span> <span class='ident'>Data</span>(
@@ -181,7 +203,7 @@ differently depending on which is defined first.</p>
                            href="#limit"><code>limit</code></a></h4>
 <p>Limits the amount of bytes that can be consumed or written during coding.</p>
 <pre class='rust rust-example-rendered'>
-<span class='kw'>use</span> <span class='ident'>pod</span>::<span class='ident'>Decode</span>;
+<span class='kw'>use</span> <span class='ident'>nue</span>::<span class='ident'>Decode</span>;
 
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>NueDecode</span>)]</span>
 <span class='kw'>struct</span> <span class='ident'>Data</span>(
@@ -196,7 +218,7 @@ differently depending on which is defined first.</p>
                            href="#consume"><code>consume</code></a></h4>
 <p>When set, uses all of <code>limit</code> even if the type did not encode or decode the entire byte region.</p>
 <pre class='rust rust-example-rendered'>
-<span class='kw'>use</span> <span class='ident'>pod</span>::<span class='ident'>Decode</span>;
+<span class='kw'>use</span> <span class='ident'>nue</span>::<span class='ident'>Decode</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>ffi</span>::<span class='ident'>CString</span>;
 
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>NueDecode</span>)]</span>

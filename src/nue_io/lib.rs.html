@@ -64,26 +64,32 @@
 <span id="22">22</span>
 <span id="23">23</span>
 <span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
 </pre><pre class='rust '>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>deny</span>(<span class='ident'>missing_docs</span>)]</span>
 
 <span class='doccomment'>//! Utilities for working with I/O streams.</span>
 
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>byteorder</span>;
+<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>uninitialized</span>;
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>resize_slice</span>;
 
 <span class='doccomment'>/// An extension for `Read`ing an exact amount of data.</span>
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>read_exact</span>;
 
-<span class='doccomment'>/// Extensions for seeking around streams that do not normally support it.</span>
-<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>seek_forward</span>;
+<span class='kw'>mod</span> <span class='ident'>seek_forward</span>;
 
 <span class='kw'>mod</span> <span class='ident'>buf_seeker</span>;
 <span class='kw'>mod</span> <span class='ident'>region</span>;
 <span class='kw'>mod</span> <span class='ident'>align</span>;
 <span class='kw'>mod</span> <span class='ident'>take</span>;
 
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>seek_forward</span>::{<span class='ident'>SeekForward</span>, <span class='ident'>SeekRewind</span>};
+<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>seek_forward</span>::{
+    <span class='ident'>SeekRewind</span>, <span class='ident'>SeekForward</span>, <span class='ident'>SeekBackward</span>, <span class='ident'>SeekAbsolute</span>, <span class='ident'>SeekEnd</span>, <span class='ident'>Tell</span>,
+    <span class='ident'>ReadWriteTell</span>, <span class='ident'>SeekForwardRead</span>, <span class='ident'>SeekForwardWrite</span>, <span class='ident'>SeekAbsoluteRewind</span>, <span class='ident'>SeekAll</span>
+};
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>read_exact</span>::<span class='ident'>ReadExactExt</span>;
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>buf_seeker</span>::<span class='ident'>BufSeeker</span>;
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>region</span>::<span class='ident'>Region</span>;

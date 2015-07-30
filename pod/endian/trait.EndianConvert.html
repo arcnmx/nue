@@ -45,16 +45,16 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-2695' class='srclink' href='../../src/pod/endian.rs.html#85-91' title='goto source code'>[src]</a></span></h1>
-<pre class='rust trait'>pub trait EndianConvert {
-    fn <a href='#tymethod.from' class='fnname'>from</a>&lt;B: <a class='trait' href='http://burntsushi.net/rustdoc/byteorder/byteorder/trait.ByteOrder.html' title='byteorder::ByteOrder'>ByteOrder</a>&gt;(&amp;self) -&gt; Self;
-    fn <a href='#tymethod.to' class='fnname'>to</a>&lt;B: <a class='trait' href='http://burntsushi.net/rustdoc/byteorder/byteorder/trait.ByteOrder.html' title='byteorder::ByteOrder'>ByteOrder</a>&gt;(self) -&gt; Self;
+        </span><a id='src-3189' class='srclink' href='../../src/pod/endian.rs.html#129-135' title='goto source code'>[src]</a></span></h1>
+<pre class='rust trait'>pub trait EndianConvert: <a class='trait' href='../../pod/packed/trait.Aligned.html' title='pod::packed::Aligned'>Aligned</a> {
+    fn <a href='#tymethod.from' class='fnname'>from</a>&lt;B: <a class='trait' href='http://burntsushi.net/rustdoc/byteorder/byteorder/trait.ByteOrder.html' title='byteorder::ByteOrder'>ByteOrder</a>&gt;(&amp;Self::<a class='trait' href='../../pod/endian/trait.EndianConvert.html' title='pod::endian::EndianConvert'>Unaligned</a>) -&gt; Self;
+    fn <a href='#tymethod.to' class='fnname'>to</a>&lt;B: <a class='trait' href='http://burntsushi.net/rustdoc/byteorder/byteorder/trait.ByteOrder.html' title='byteorder::ByteOrder'>ByteOrder</a>&gt;(self) -&gt; Self::<a class='trait' href='../../pod/endian/trait.EndianConvert.html' title='pod::endian::EndianConvert'>Unaligned</a>;
 }</pre><div class='docblock'><p>Describes a value that can be converted to and from a specified byte order.</p>
 </div>
             <h2 id='required-methods'>Required Methods</h2>
             <div class='methods'>
-        <h3 id='tymethod.from' class='method stab '><code>fn <a href='#tymethod.from' class='fnname'>from</a>&lt;B: <a class='trait' href='http://burntsushi.net/rustdoc/byteorder/byteorder/trait.ByteOrder.html' title='byteorder::ByteOrder'>ByteOrder</a>&gt;(&amp;self) -&gt; Self</code></h3><div class='docblock'><p>Converts a value from <code>B</code></p>
-</div><h3 id='tymethod.to' class='method stab '><code>fn <a href='#tymethod.to' class='fnname'>to</a>&lt;B: <a class='trait' href='http://burntsushi.net/rustdoc/byteorder/byteorder/trait.ByteOrder.html' title='byteorder::ByteOrder'>ByteOrder</a>&gt;(self) -&gt; Self</code></h3><div class='docblock'><p>Converts a value to <code>B</code></p>
+        <h3 id='tymethod.from' class='method stab '><code>fn <a href='#tymethod.from' class='fnname'>from</a>&lt;B: <a class='trait' href='http://burntsushi.net/rustdoc/byteorder/byteorder/trait.ByteOrder.html' title='byteorder::ByteOrder'>ByteOrder</a>&gt;(&amp;Self::<a class='trait' href='../../pod/endian/trait.EndianConvert.html' title='pod::endian::EndianConvert'>Unaligned</a>) -&gt; Self</code></h3><div class='docblock'><p>Converts a value from <code>B</code></p>
+</div><h3 id='tymethod.to' class='method stab '><code>fn <a href='#tymethod.to' class='fnname'>to</a>&lt;B: <a class='trait' href='http://burntsushi.net/rustdoc/byteorder/byteorder/trait.ByteOrder.html' title='byteorder::ByteOrder'>ByteOrder</a>&gt;(self) -&gt; Self::<a class='trait' href='../../pod/endian/trait.EndianConvert.html' title='pod::endian::EndianConvert'>Unaligned</a></code></h3><div class='docblock'><p>Converts a value to <code>B</code></p>
 </div></div>
         <h2 id='implementors'>Implementors</h2>
         <ul class='item-list' id='implementors-list'>
@@ -66,6 +66,7 @@
 <li><code>impl <a class='trait' href='../../pod/endian/trait.EndianConvert.html' title='pod::endian::EndianConvert'>EndianConvert</a> for <a href='http://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a></code></li>
 <li><code>impl <a class='trait' href='../../pod/endian/trait.EndianConvert.html' title='pod::endian::EndianConvert'>EndianConvert</a> for <a href='http://doc.rust-lang.org/nightly/std/primitive.f32.html'>f32</a></code></li>
 <li><code>impl <a class='trait' href='../../pod/endian/trait.EndianConvert.html' title='pod::endian::EndianConvert'>EndianConvert</a> for <a href='http://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a></code></li>
+<li><code>impl <a class='trait' href='../../pod/endian/trait.EndianConvert.html' title='pod::endian::EndianConvert'>EndianConvert</a> for <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></li>
 </ul><script type="text/javascript" async
                               src="../../implementors/pod/endian/trait.EndianConvert.js">
                       </script></section>

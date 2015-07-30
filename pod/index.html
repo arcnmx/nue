@@ -45,7 +45,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-0' class='srclink' href='../src/pod/lib.rs.html#1-46' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-0' class='srclink' href='../src/pod/lib.rs.html#1-58' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Provides traits that assist with I/O and byte slice conversions involving Plain Old Data.</p>
 
 <h1 id="safety" class='section-header'><a
@@ -72,7 +72,7 @@
 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>cmp</span>, <span class='ident'>data</span>.<span class='ident'>as_slice</span>());
 </pre>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
-<table><tr><td><code>pub use endian::{<a class='type' href='../pod/endian/type.Le.html' title='pod::endian::Le'>Le</a>, <a class='type' href='../pod/endian/type.Be.html' title='pod::endian::Be'>Be</a>};</code></td></tr><tr><td><code>pub use code::{<a class='trait' href='../pod/code/trait.Encode.html' title='pod::code::Encode'>Encode</a>, <a class='trait' href='../pod/code/trait.Decode.html' title='pod::code::Decode'>Decode</a>};</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table><tr><td><code>pub use endian::{<a class='type' href='../pod/endian/type.Le.html' title='pod::endian::Le'>Le</a>, <a class='type' href='../pod/endian/type.Be.html' title='pod::endian::Be'>Be</a>, <a class='type' href='../pod/endian/type.Native.html' title='pod::endian::Native'>Native</a>};</code></td></tr><tr><td><code>pub use code::{<a class='trait' href='../pod/code/trait.Encode.html' title='pod::code::Encode'>Encode</a>, <a class='trait' href='../pod/code/trait.Decode.html' title='pod::code::Decode'>Decode</a>};</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
                     <tr class=' module-item'>
                         <td><a class='mod' href='code/index.html'
@@ -89,6 +89,14 @@
                         <td class='docblock short'>
                              <p>Containers for primitives</p>
 
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='mod' href='packed/index.html'
+                               title='pod::packed'>packed</a></td>
+                        <td class='docblock short'>
+                             
                         </td>
                     </tr>
                 </table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>

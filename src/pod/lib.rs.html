@@ -86,8 +86,20 @@
 <span id="44">44</span>
 <span id="45">45</span>
 <span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
 </pre><pre class='rust '>
-<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>cfg_attr</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;unstable&quot;</span>, <span class='ident'>feature</span>(<span class='ident'>optin_builtin_traits</span>, <span class='ident'>raw</span>, <span class='ident'>box_raw</span>))]</span>
+<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>cfg_attr</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;unstable&quot;</span>, <span class='ident'>feature</span>(<span class='ident'>box_raw</span>))]</span>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>deny</span>(<span class='ident'>missing_docs</span>)]</span>
 
 <span class='doccomment'>//! Provides traits that assist with I/O and byte slice conversions involving Plain Old Data.</span>
@@ -100,12 +112,19 @@
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! ```</span>
 <span class='doccomment'>//! use pod::{Pod, PodExt, Le, Be};</span>
+<span class='doccomment'>//! # #[cfg(not(feature = &quot;unstable&quot;))]</span>
+<span class='doccomment'>//! # mod stable {</span>
+<span class='doccomment'>//! # use pod::packed::{Unaligned, Packed};</span>
+<span class='doccomment'>//! # unsafe impl Packed for super::Data { }</span>
+<span class='doccomment'>//! # unsafe impl Unaligned for super::Data { }</span>
+<span class='doccomment'>//! # }</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! unsafe impl Pod for Data { }</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! #[repr(packed)]</span>
 <span class='doccomment'>//! struct Data(u8, Le&lt;u16&gt;, Be&lt;u32&gt;);</span>
 <span class='doccomment'>//!</span>
+<span class='doccomment'>//! # fn main() {</span>
 <span class='doccomment'>//! let data = Data(1, Le::new(0x2055), Be::new(0xdeadbeef));</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! let cmp = &amp;[</span>
@@ -115,11 +134,13 @@
 <span class='doccomment'>//! ];</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! assert_eq!(cmp, data.as_slice());</span>
+<span class='doccomment'>//! # }</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! ```</span>
 
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>uninitialized</span>;
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>byteorder</span>;
+<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>packed</span> <span class='kw'>as</span> <span class='ident'>nue_packed</span>;
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>nue_io</span>;
 
 <span class='kw'>mod</span> <span class='ident'>pod</span>;
@@ -130,9 +151,12 @@
 <span class='doccomment'>/// Containers for primitives</span>
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>endian</span>;
 
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>endian</span>::{<span class='ident'>Le</span>, <span class='ident'>Be</span>};
+<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>endian</span>::{<span class='ident'>Le</span>, <span class='ident'>Be</span>, <span class='ident'>Native</span>};
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>code</span>::{<span class='ident'>Encode</span>, <span class='ident'>Decode</span>};
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>pod</span>::{<span class='ident'>Pod</span>, <span class='ident'>PodExt</span>};
+
+<span class='doccomment'>/// Re-export the `packed` crate</span>
+<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>nue_packed</span> <span class='kw'>as</span> <span class='ident'>packed</span>;
 </pre>
 </section>
     <section id='search' class="content hidden"></section>

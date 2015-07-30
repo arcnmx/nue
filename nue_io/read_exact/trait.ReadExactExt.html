@@ -45,9 +45,10 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-14' class='srclink' href='../../src/nue_io/read_exact.rs.html#8-14' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-13' class='srclink' href='../../src/nue_io/read_exact.rs.html#6-17' title='goto source code'>[src]</a></span></h1>
 <pre class='rust trait'>pub trait ReadExactExt {
     fn <a href='#tymethod.read_exact' class='fnname'>read_exact</a>(&amp;mut self, buf: <a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;mut [</a><a href='http://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a><a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>) -&gt; <a class='enum' href='http://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, <a class='enum' href='../../nue_io/read_exact/enum.Error.html' title='nue_io::read_exact::Error'>Error</a>&gt;;
+    fn <a href='#tymethod.read_exact_eof' class='fnname'>read_exact_eof</a>(&amp;mut self, buf: <a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;mut [</a><a href='http://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a><a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>) -&gt; <a class='type' href='http://doc.rust-lang.org/nightly/std/io/error/type.Result.html' title='std::io::error::Result'>Result</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>&gt;;
 }</pre><div class='docblock'><p>Extension trait that provides <code>read_exact</code> for all <code>Read</code> implementations.</p>
 </div>
             <h2 id='required-methods'>Required Methods</h2>
@@ -56,6 +57,9 @@
 
 <p>The <code>Read</code> equivalent of <code>Write::write_all</code>.
 Retries upon <code>Interrupted</code> errors.</p>
+</div><h3 id='tymethod.read_exact_eof' class='method stab '><code>fn <a href='#tymethod.read_exact_eof' class='fnname'>read_exact_eof</a>(&amp;mut self, buf: <a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;mut [</a><a href='http://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a><a href='http://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>) -&gt; <a class='type' href='http://doc.rust-lang.org/nightly/std/io/error/type.Result.html' title='std::io::error::Result'>Result</a>&lt;<a href='http://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>&gt;</code></h3><div class='docblock'><p>Reads as much as possible into <code>buf</code> until EOF.</p>
+
+<p>Retries upon <code>Interrupted</code> errors.</p>
 </div></div>
         <h2 id='implementors'>Implementors</h2>
         <ul class='item-list' id='implementors-list'>
