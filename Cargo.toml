@@ -32,7 +32,3 @@ path = "pod"
 [dependencies.packed]
 version = "0.2"
 path = "packed"
-
-[dev-dependencies.nue-macros]
-version = "0.2"
-path = "macros"

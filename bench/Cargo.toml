@@ -1,0 +1,23 @@
+[package]
+name = "nue-bench"
+version = "0.0.0"
+authors = ["arcnmx"]
+
+[[bench]]
+name = "nue"
+path = "bench.rs"
+
+[features]
+unstable = ["nue/unstable"]
+
+[dev-dependencies.nue]
+version = "0.2"
+path = ".."
+
+[dev-dependencies.pod]
+version = "0.2"
+path = "../pod"
+
+[dev-dependencies.nue-macros]
+version = "0.2"
+path = "../macros"

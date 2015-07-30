@@ -39,7 +39,7 @@ before_deploy:
     - (cd codegen && cargo doc --no-deps -v && cargo package -v && cargo publish --token "$CRATES_IO_TOKEN" || true)
     - (cd macros && cargo doc --no-deps -v && cargo package -v && cargo publish --token "$CRATES_IO_TOKEN" || true)
     - (cargo doc --no-deps -v && cargo package -v && cargo publish --token "$CRATES_IO_TOKEN" || true)
-    - cargo bench -q > $CARGO_TARGET_DIR/benchmarks.txt
+    - (cd bench && cargo bench -q > $CARGO_TARGET_DIR/benchmarks.txt)
 
 deploy:
     provider: releases
