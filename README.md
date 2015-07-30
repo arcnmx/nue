@@ -6,6 +6,8 @@ A collection of tools for working with binary data and POD structs in Rust.
 
  - [pod][docs-pod] is an approach at building a safe interface for
    transmuting POD structs to and from byte slices.
+ - [packed][docs-packed] exposes unaligned packed data structurs in a safe
+   and stable manner.
  - [nue-macros][docs-macros] provides helpers for `pod`, as well
    as a serialization-like library for dealing with binary streams of data.
  - [nue-codegen][docs-codegen] allows the use of `nue-macros` without
@@ -20,6 +22,7 @@ A collection of tools for working with binary data and POD structs in Rust.
 [cargo]: https://crates.io/search?q=nue
 [docs-badge]: https://img.shields.io/badge/API-docs-blue.svg?style=flat-square
 [docs]: http://arcnmx.github.io/nue/nue/
+[docs-packed]: http://arcnmx.github.io/nue/packed/
 [docs-io]: http://arcnmx.github.io/nue/nue_io/
 [docs-pod]: http://arcnmx.github.io/nue/pod/
 [docs-macros]: http://arcnmx.github.io/nue/nue_macros/
