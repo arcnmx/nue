@@ -7,7 +7,7 @@ extern crate pod;
 
 use std::mem::size_of;
 use std::io::{BufReader, Cursor, Repeat, Seek, SeekFrom, repeat};
-use pod::{Be, Le, PodExt, Decode, Encode};
+use pod::{Be, Le, Pod, Decode, Encode};
 use test::black_box as bb;
 use test::Bencher;
 
@@ -127,7 +127,7 @@ fn bench_pod_encode_ref(b: &mut Bencher) {
     let data = data_pod();
 
     b.iter(|| {
-        let mem = PodExt::from_mut_slice(&mut stream[..size_of::<DataPod>()]);
+        let mem = Pod::from_mut_slice(&mut stream[..size_of::<DataPod>()]);
         *mem = data;
         bb(mem);
     });

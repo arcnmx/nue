@@ -44,7 +44,7 @@
 //!
 //! extern crate pod;
 //! extern crate nue;
-//! use pod::PodExt;
+//! use pod::Pod;
 //!
 //! # fn main() {
 //! #[derive(Pod)]

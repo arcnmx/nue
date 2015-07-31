@@ -9,6 +9,9 @@ use self::unstable::{box_from, box_into};
 ///
 /// It is unsafe to `impl` this manually, use `#[derive(Pod)]` instead.
 pub unsafe trait Pod: Sized {
+    #[doc(hidden)]
+    fn __assert_pod() { }
+
     /// Safely borrows the aligned value mutably
     ///
     /// See also: `Aligned::as_aligned_mut`
@@ -33,12 +36,6 @@ pub unsafe trait Pod: Sized {
         unsafe { Self::from_unaligned(s) }
     }
 
-    #[doc(hidden)]
-    fn __assert_pod() { }
-}
-
-/// Helper methods for converting POD types to/from byte slices and vectors
-pub trait PodExt: Sized {
     /// Borrows the POD as a byte slice
     #[inline]
     fn as_slice<'a>(&'a self) -> &'a [u8] {
@@ -149,9 +146,31 @@ pub trait PodExt: Sized {
     fn zeroed() -> Self {
         unsafe { uninitialized::uninitialized() }
     }
-}
 
-impl<T: Pod> PodExt for T { }
+    /// Maps a POD slice from one type to another
+    ///
+    /// # Panics
+    ///
+    /// Will panic if the output type does not perfectly fit into the slice.
+    #[inline]
+    fn map_slice<'a, T: Pod + Unaligned>(s: &'a [Self]) -> &'a [T] where Self: Unaligned {
+        let len = s.len() * size_of::<Self>();
+        assert_eq!(len % size_of::<T>(), 0);
+        unsafe { from_raw_parts(s.as_ptr() as *const T, len / size_of::<T>()) }
+    }
+
+    /// Maps a mutable POD slice from one type to another
+    ///
+    /// # Panics
+    ///
+    /// Will panic if the output type does not perfectly fit into the slice.
+    #[inline]
+    fn map_mut_slice<'a, T: Pod + Unaligned>(s: &'a mut [Self]) -> &'a mut [T] where Self: Unaligned {
+        let len = s.len() * size_of::<Self>();
+        assert_eq!(len % size_of::<T>(), 0);
+        unsafe { from_raw_parts_mut(s.as_mut_ptr() as *mut T, len / size_of::<T>()) }
+    }
+}
 
 unsafe impl Pod for () { }
 unsafe impl Pod for f32 { }

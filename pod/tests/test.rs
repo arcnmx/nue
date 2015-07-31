@@ -1,6 +1,6 @@
 extern crate pod;
 
-use pod::{Pod, PodExt, Le, Be, Encode, Decode};
+use pod::{Pod, Le, Be, Encode, Decode};
 use pod::packed::{Packed, Aligned, Un};
 use std::io::{Cursor, Seek, SeekFrom};
 

@@ -1,6 +1,6 @@
 use std::io::{self, Read, Write, BufReader, BufRead, Cursor};
 use std::ffi::{CString, CStr};
-use ::{Pod, PodExt};
+use ::Pod;
 
 use uninitialized::UNINITIALIZED;
 use nue_io::ReadExactExt;
@@ -139,7 +139,7 @@ impl<T: Pod> Decode for T {
 
     fn decode<R: Read>(r: &mut R) -> io::Result<Self> {
         // TODO: Would be nice if we could use [0u8; size_of::<T>()]
-        let mut pod: Self = PodExt::zeroed();
+        let mut pod: Self = Pod::zeroed();
 
         try!(r.read_exact(pod.mut_slice()));
         Ok(pod)

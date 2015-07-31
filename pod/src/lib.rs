@@ -10,7 +10,7 @@
 //! # Example
 //!
 //! ```
-//! use pod::{Pod, PodExt, Le, Be};
+//! use pod::{Pod, Le, Be};
 //! # #[cfg(not(feature = "unstable"))]
 //! # mod stable {
 //! # use pod::packed::{Unaligned, Packed};
@@ -52,7 +52,7 @@ pub mod endian;
 
 pub use endian::{Le, Be, Native};
 pub use code::{Encode, Decode};
-pub use pod::{Pod, PodExt};
+pub use pod::Pod;
 
 /// Re-export the `packed` crate
 pub use nue_packed as packed;
