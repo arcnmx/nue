@@ -20,7 +20,7 @@
 //!
 //! unsafe impl Pod for Data { }
 //!
-//! #[repr(packed)]
+//! #[repr(C)]
 //! struct Data(u8, Le<u16>, Be<u32>);
 //!
 //! # fn main() {

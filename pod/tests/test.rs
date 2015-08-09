@@ -13,7 +13,7 @@ mod stable {
 unsafe impl Packed for POD { }
 unsafe impl Pod for POD { }
 
-#[repr(packed)]
+#[repr(C)]
 #[derive(Copy, Clone, PartialEq, Debug)]
 struct POD {
     zero: u8,

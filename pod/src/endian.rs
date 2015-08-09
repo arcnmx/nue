@@ -18,7 +18,7 @@ pub type Native<T> = EndianPrimitive<NativeEndian, T>;
 
 /// A POD container for a primitive that stores a value in the specified endianness
 /// in memory, and transforms on `get`/`set`
-#[repr(packed)]
+#[repr(C)]
 pub struct EndianPrimitive<B, T: EndianConvert> {
     value: T::Unaligned,
     _phantom: PhantomData<*const B>,

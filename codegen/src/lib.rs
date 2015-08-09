@@ -49,7 +49,7 @@ fn expand_packed(cx: &mut ExtCtxt, span: Span, meta_item: &MetaItem, annotatable
 
     let builder = AstBuilder::new().span(span);
 
-    let repr = builder.attr().list("repr").words(["packed"].iter()).build();
+    let repr = builder.attr().list("repr").words(["C"].iter()).build();
     let packed = builder.attr().word("__nue_packed");
     let derive_packed = builder.attr().word("derive_Packed");
 
