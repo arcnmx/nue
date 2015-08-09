@@ -45,7 +45,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-18' class='srclink' href='../../packed/trait.Aligned.html?gotosrc=18' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-18' class='srclink' href='../../nue_packed/trait.Aligned.html?gotosrc=18' title='goto source code'>[src]</a></span></h1>
 <pre class='rust trait'>pub unsafe trait Aligned {
     type Unaligned: <a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Copy.html' title='core::marker::Copy'>Copy</a> + <a class='trait' href='../../pod/packed/trait.Unaligned.html' title='pod::packed::Unaligned'>Unaligned</a>;
     fn <a href='#method.is_aligned' class='fnname'>is_aligned</a>(u: &amp;Self::<a class='trait' href='../../pod/packed/trait.Aligned.html' title='pod::packed::Aligned'>Unaligned</a>) -&gt; <a href='http://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a> { ... }
@@ -110,7 +110,7 @@ same size.</p>
 <li><code>impl&lt;T&gt; <a class='trait' href='../../pod/packed/trait.Aligned.html' title='pod::packed::Aligned'>Aligned</a> for <a href='http://doc.rust-lang.org/nightly/std/primitive.array.html'>[T; 1]</a> <span class='where'>where T: <a class='trait' href='../../pod/packed/trait.Aligned.html' title='pod::packed::Aligned'>Aligned</a></span></code></li>
 <li><code>impl&lt;T&gt; <a class='trait' href='../../pod/packed/trait.Aligned.html' title='pod::packed::Aligned'>Aligned</a> for <a href='http://doc.rust-lang.org/nightly/std/primitive.array.html'>[T; 0]</a></code></li>
 </ul><script type="text/javascript" async
-                              src="../../implementors/packed/trait.Aligned.js">
+                              src="../../implementors/nue_packed/trait.Aligned.js">
                       </script></section>
     <section id='search' class="content hidden"></section>
 
@@ -146,8 +146,8 @@ same size.</p>
                 <p>
                     Accepted types are: <code>fn</code>, <code>mod</code>,
                     <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>typedef</code> (or
-                    <code>tdef</code>).
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
                 </p>
 
                 <p>

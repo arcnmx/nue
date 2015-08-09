@@ -85,7 +85,7 @@ attribute to the type.</p>
 
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>pod</span>;
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>nue</span>;
-<span class='kw'>use</span> <span class='ident'>pod</span>::<span class='ident'>PodExt</span>;
+<span class='kw'>use</span> <span class='ident'>pod</span>::<span class='ident'>Pod</span>;
 
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Pod</span>)]</span>
 <span class='attribute'>#[<span class='ident'>packed</span>]</span>
@@ -267,8 +267,8 @@ differently depending on which is defined first.</p>
                 <p>
                     Accepted types are: <code>fn</code>, <code>mod</code>,
                     <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>typedef</code> (or
-                    <code>tdef</code>).
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
                 </p>
 
                 <p>

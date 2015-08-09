@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["code","I/O traits for POD and other types."],["endian","Containers for primitives"],["packed",""]],"trait":[["Pod","A marker trait indicating that a type is Plain Old Data."],["PodExt","Helper methods for converting POD types to/from byte slices and vectors"]]});
+initSidebarItems({"mod":[["code","I/O traits for POD and other types."],["endian","Containers for primitives"],["packed",""]],"trait":[["Pod","A marker trait indicating that a type is Plain Old Data."]]});

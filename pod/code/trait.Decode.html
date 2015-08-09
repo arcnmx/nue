@@ -45,7 +45,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-1493' class='srclink' href='../../src/pod/code.rs.html#71-103' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-1738' class='srclink' href='../../src/pod/code.rs.html#71-103' title='goto source code'>[src]</a></span></h1>
 <pre class='rust trait'>pub trait Decode: <a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a> {
     type Options: <a class='trait' href='http://doc.rust-lang.org/nightly/core/default/trait.Default.html' title='core::default::Default'>Default</a>;
     fn <a href='#method.decode' class='fnname'>decode</a>&lt;R: <a class='trait' href='http://doc.rust-lang.org/nightly/std/io/trait.Read.html' title='std::io::Read'>Read</a>&gt;(r: &amp;mut R) -&gt; <a class='type' href='http://doc.rust-lang.org/nightly/std/io/error/type.Result.html' title='std::io::error::Result'>Result</a>&lt;Self&gt; { ... }
@@ -118,8 +118,8 @@ Therefore any <code>Drop</code> implementations must not assume that the object 
                 <p>
                     Accepted types are: <code>fn</code>, <code>mod</code>,
                     <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>typedef</code> (or
-                    <code>tdef</code>).
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
                 </p>
 
                 <p>

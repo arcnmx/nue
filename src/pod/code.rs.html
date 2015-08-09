@@ -370,7 +370,7 @@
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>io</span>::{<span class='self'>self</span>, <span class='ident'>Read</span>, <span class='ident'>Write</span>, <span class='ident'>BufReader</span>, <span class='ident'>BufRead</span>, <span class='ident'>Cursor</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>ffi</span>::{<span class='ident'>CString</span>, <span class='ident'>CStr</span>};
-<span class='kw'>use</span> ::{<span class='ident'>Pod</span>, <span class='ident'>PodExt</span>};
+<span class='kw'>use</span> ::<span class='ident'>Pod</span>;
 
 <span class='kw'>use</span> <span class='ident'>uninitialized</span>::<span class='ident'>UNINITIALIZED</span>;
 <span class='kw'>use</span> <span class='ident'>nue_io</span>::<span class='ident'>ReadExactExt</span>;
@@ -509,7 +509,7 @@
 
     <span class='kw'>fn</span> <span class='ident'>decode</span><span class='op'>&lt;</span><span class='ident'>R</span>: <span class='ident'>Read</span><span class='op'>&gt;</span>(<span class='ident'>r</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>R</span>) <span class='op'>-&gt;</span> <span class='ident'>io</span>::<span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='kw'>Self</span><span class='op'>&gt;</span> {
         <span class='comment'>// TODO: Would be nice if we could use [0u8; size_of::&lt;T&gt;()]</span>
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>pod</span>: <span class='kw'>Self</span> <span class='op'>=</span> <span class='ident'>PodExt</span>::<span class='ident'>zeroed</span>();
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>pod</span>: <span class='kw'>Self</span> <span class='op'>=</span> <span class='ident'>Pod</span>::<span class='ident'>zeroed</span>();
 
         <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>r</span>.<span class='ident'>read_exact</span>(<span class='ident'>pod</span>.<span class='ident'>mut_slice</span>()));
         <span class='prelude-val'>Ok</span>(<span class='ident'>pod</span>)
@@ -731,8 +731,8 @@
                 <p>
                     Accepted types are: <code>fn</code>, <code>mod</code>,
                     <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>typedef</code> (or
-                    <code>tdef</code>).
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
                 </p>
 
                 <p>

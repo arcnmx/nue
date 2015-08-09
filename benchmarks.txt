@@ -1,14 +1,14 @@
 
 running 9 tests
-test bench_decode              ... bench:          87 ns/iter (+/- 50)
-test bench_encode              ... bench:          85 ns/iter (+/- 4)
-test bench_pod_decode          ... bench:          38 ns/iter (+/- 0)
-test bench_pod_decode_ref      ... bench:           0 ns/iter (+/- 1)
-test bench_pod_decode_ref_copy ... bench:          26 ns/iter (+/- 3)
-test bench_pod_encode          ... bench:          22 ns/iter (+/- 1)
-test bench_pod_encode_ref      ... bench:           6 ns/iter (+/- 0)
-test bench_repeat_decode       ... bench:         133 ns/iter (+/- 0)
-test bench_repeat_pod_decode   ... bench:         107 ns/iter (+/- 1)
+test bench_decode              ... bench:          67 ns/iter (+/- 6)
+test bench_encode              ... bench:          82 ns/iter (+/- 3)
+test bench_pod_decode          ... bench:          38 ns/iter (+/- 2)
+test bench_pod_decode_ref      ... bench:           0 ns/iter (+/- 0)
+test bench_pod_decode_ref_copy ... bench:          15 ns/iter (+/- 1)
+test bench_pod_encode          ... bench:          23 ns/iter (+/- 2)
+test bench_pod_encode_ref      ... bench:           7 ns/iter (+/- 1)
+test bench_repeat_decode       ... bench:         142 ns/iter (+/- 5)
+test bench_repeat_pod_decode   ... bench:         104 ns/iter (+/- 3)
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 9 measured
 
