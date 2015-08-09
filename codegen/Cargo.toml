@@ -1,6 +1,6 @@
 [package]
 name = "nue-codegen"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["arcnmx"]
 
 description = "Stable POD and binary data encoding I/O macros"

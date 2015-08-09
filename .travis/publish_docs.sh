@@ -3,7 +3,7 @@ set -eu
 
 TAG=$1
 
-cd target/doc
+cd $CARGO_TARGET_DIR/doc
 cp -a ../benchmarks.txt ./
 
 git init

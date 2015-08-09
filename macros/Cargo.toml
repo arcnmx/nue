@@ -1,6 +1,6 @@
 [package]
 name = "nue-macros"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["arcnmx"]
 
 description = "POD and binary data encoding I/O macros"
@@ -15,18 +15,18 @@ name = "nue_macros"
 plugin = true
 
 [dependencies.nue-codegen]
-version = "0.2"
+version = "0.3"
 path = "../codegen"
 default-features = false
 features = ["unstable"]
 
 [dev-dependencies.nue]
-version = "0.2"
+version = "0.3"
 features = ["unstable"]
 path = "../"
 
 [dev-dependencies.pod]
-version = "0.2"
+version = "0.3"
 features = ["unstable"]
 path = "../pod"
 

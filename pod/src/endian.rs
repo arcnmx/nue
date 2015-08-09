@@ -176,10 +176,7 @@ impl EndianConvert for bool {
 #[test]
 fn endian_size() {
     use std::mem::size_of;
-    #[cfg(feature = "unstable")]
     use std::mem::align_of;
-    #[cfg(not(feature = "unstable"))]
-    use std::mem::min_align_of as align_of;
 
     type B = NativeEndian;
 

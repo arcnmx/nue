@@ -1,6 +1,6 @@
 [package]
 name = "nue"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["arcnmx"]
 
 description = "I/O, POD, and misc. binary data encoding"
@@ -22,13 +22,13 @@ path = "bench.rs"
 unstable = ["pod/unstable", "packed/unstable"]
 
 [dependencies.nue-io]
-version = "0.2"
+version = "0.3"
 path = "io"
 
 [dependencies.pod]
-version = "0.2"
+version = "0.3"
 path = "pod"
 
 [dependencies.packed]
-version = "0.2"
+version = "0.3"
 path = "packed"

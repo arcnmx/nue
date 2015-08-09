@@ -8,9 +8,6 @@
 use std::mem::{transmute, replace, uninitialized, forget};
 use std::marker::PhantomData;
 
-#[cfg(not(feature = "unstable"))]
-use std::mem::min_align_of as align_of;
-#[cfg(feature = "unstable")]
 use std::mem::align_of;
 
 /// A marker trait indicating that a type has an alignment of `1`.

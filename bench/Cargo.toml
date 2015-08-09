@@ -11,13 +11,10 @@ path = "bench.rs"
 unstable = ["nue/unstable"]
 
 [dev-dependencies.nue]
-version = "0.2"
 path = ".."
 
 [dev-dependencies.pod]
-version = "0.2"
 path = "../pod"
 
 [dev-dependencies.nue-macros]
-version = "0.2"
 path = "../macros"

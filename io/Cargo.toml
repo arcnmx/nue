@@ -1,6 +1,6 @@
 [package]
 name = "nue-io"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["arcnmx"]
 
 description = "Binary data encoding and I/O"

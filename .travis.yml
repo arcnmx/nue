@@ -1,27 +1,31 @@
-env:
-    global:
-        - secure: "mmDJNwk0zfPTK6JHDMcHlfs+If7jFMVKUcZGJQCCv5ESvORMEnfuAigI4VTqogw96cteaaAgWwRKdwRFBjfLAf4nYw1f+4M1cxUBGt5n5+bo6/AQVYsLfiz6NAez6d1yDqxChGSrZtWbDDh9+HU27tzUV6x6rOHeetV34zAfX16z7ppTaOW6YJgPINQ5c0oHYgk+Oa0yqlgdwuq9IcQnff5n7F/5eD426b1RDfh8zCsGuYj/1DPTR8l6t5jwShX2jAM3uRnvnSEIbMKQJFUCWQkoXS6BPQ31seWt6x+3i0qJlcA5Kb/ghc6U7nMTfxQMEXyAsnoMms9vBY+Q7JOfuZiyyELM7sigylOU6PDf+ORjqgyU5AI7Dletrt3NB4tFSj/Za6h/d2v5GOPsF7PRa65tJcMtUthW4cXv8Yict8OD/dDoz9IvqWwFGU/yKbhY+rvThRJxpmsDx8CcE1obuHunFqggIQn0mX5niZliJILkcGU2qYMc27szSlFLjMtgEkxkxlHtKUGVdqdo+lod7H5bq8nfw4/TKU2mzC5Kf7FbeLvdAUPwDTaThGpcgmQWiD52hEcvAFyR83JVsZ+fSXpyzBtrdkLNkrHk83qxHdTjkWV0RXQlno255MCEhGGKPTxpV+lD5voMTV2idxCO8QvFsNY6zAXfbKAid+Z89h4="
-        - secure: "JjFImwQpfHO/hkrDEGAdvG35m0l7HY7pDHaupVhk8nXqPCzIxWhYA2rueP8JIuItfi7jh3Fw43LBjVwidcnXUGLOxsviPdbIQxo51xlKct0zF5dnTDaixAAyrXchgv4scLIxOWAj8z2Me2xFmpVBGiLyS9z0uxuyjV6re7bxU/sHQ7rRIVW1oVCRFiXRXsUIqcgW28fsMUfePswO6+taRBRcaThGYfZ1s3cRfCHFTV+QkWjDANf2CiXy3cHE/YqGAV8yicXvC8CLoiXFt+N6EIhf5UXMZRROgsFRjPp7f42j70Jt9V3vOdcq94NG8Yiv54bRZ/fK5mSCD+f5TjXVcJfx7elwSKrbJB10YDR299wPSrOqpIF2ANRc7lq0+7qU/KeWWnEj4Y+59NxufBC6SiutFFcPzHxhMZf+uhY2/m1Vlw33Hc7ufdzmFENRzrKFCuFkXY+t0xNbUKD7qKG3F07fXipxMiTvITjHPtZC+H6sLeFOmwkKqPm4mvr0ZMvClkenzhiXhaRhEJ8fpSMzsS7PVzyzVxw0LEWyw/BQqjaCn/gb0m74Dmus9ZiotBHPVQsS/QM/qkBhncXv/kz0yalTBwOt90E4DQsoIZiYlW7D8DZ/hEJqvWBoa8HkjNR9HJP5UjCgwKzxSh2iYzPutHftvUoRtM3nThzxd39dTzI="
-        - CARGO_TARGET_DIR="$TRAVIS_BUILD_DIR/target"
-    matrix:
-        - FEATURES=
-
 language: rust
 rust:
     - nightly
     - beta
     - stable
 sudo: false
-
 os:
     - linux
+
+env:
+    global:
+        - secure: "mmDJNwk0zfPTK6JHDMcHlfs+If7jFMVKUcZGJQCCv5ESvORMEnfuAigI4VTqogw96cteaaAgWwRKdwRFBjfLAf4nYw1f+4M1cxUBGt5n5+bo6/AQVYsLfiz6NAez6d1yDqxChGSrZtWbDDh9+HU27tzUV6x6rOHeetV34zAfX16z7ppTaOW6YJgPINQ5c0oHYgk+Oa0yqlgdwuq9IcQnff5n7F/5eD426b1RDfh8zCsGuYj/1DPTR8l6t5jwShX2jAM3uRnvnSEIbMKQJFUCWQkoXS6BPQ31seWt6x+3i0qJlcA5Kb/ghc6U7nMTfxQMEXyAsnoMms9vBY+Q7JOfuZiyyELM7sigylOU6PDf+ORjqgyU5AI7Dletrt3NB4tFSj/Za6h/d2v5GOPsF7PRa65tJcMtUthW4cXv8Yict8OD/dDoz9IvqWwFGU/yKbhY+rvThRJxpmsDx8CcE1obuHunFqggIQn0mX5niZliJILkcGU2qYMc27szSlFLjMtgEkxkxlHtKUGVdqdo+lod7H5bq8nfw4/TKU2mzC5Kf7FbeLvdAUPwDTaThGpcgmQWiD52hEcvAFyR83JVsZ+fSXpyzBtrdkLNkrHk83qxHdTjkWV0RXQlno255MCEhGGKPTxpV+lD5voMTV2idxCO8QvFsNY6zAXfbKAid+Z89h4="
+        - secure: "JjFImwQpfHO/hkrDEGAdvG35m0l7HY7pDHaupVhk8nXqPCzIxWhYA2rueP8JIuItfi7jh3Fw43LBjVwidcnXUGLOxsviPdbIQxo51xlKct0zF5dnTDaixAAyrXchgv4scLIxOWAj8z2Me2xFmpVBGiLyS9z0uxuyjV6re7bxU/sHQ7rRIVW1oVCRFiXRXsUIqcgW28fsMUfePswO6+taRBRcaThGYfZ1s3cRfCHFTV+QkWjDANf2CiXy3cHE/YqGAV8yicXvC8CLoiXFt+N6EIhf5UXMZRROgsFRjPp7f42j70Jt9V3vOdcq94NG8Yiv54bRZ/fK5mSCD+f5TjXVcJfx7elwSKrbJB10YDR299wPSrOqpIF2ANRc7lq0+7qU/KeWWnEj4Y+59NxufBC6SiutFFcPzHxhMZf+uhY2/m1Vlw33Hc7ufdzmFENRzrKFCuFkXY+t0xNbUKD7qKG3F07fXipxMiTvITjHPtZC+H6sLeFOmwkKqPm4mvr0ZMvClkenzhiXhaRhEJ8fpSMzsS7PVzyzVxw0LEWyw/BQqjaCn/gb0m74Dmus9ZiotBHPVQsS/QM/qkBhncXv/kz0yalTBwOt90E4DQsoIZiYlW7D8DZ/hEJqvWBoa8HkjNR9HJP5UjCgwKzxSh2iYzPutHftvUoRtM3nThzxd39dTzI="
+    matrix:
+        - FEATURES=
 
 matrix:
     include:
         - rust: nightly
           env: FEATURES="--features unstable"
 
+cache:
+    directories:
+        - $TRAVIS_BUILD_DIR/target
+        - $HOME/.cargo
+
 script:
+    - export CARGO_TARGET_DIR="$TRAVIS_BUILD_DIR/target/$TRAVIS_RUST_VERSION"
     - (cd uninitialized && cargo test -v)
     - (cd packed && cargo test -v $FEATURES)
     - (cd io && cargo test -v)
@@ -45,12 +49,12 @@ deploy:
     provider: releases
     api_key:
         secure: "Y7yRI4sQySToVsYtwVRMEIcd7CD0nuh1MarSfeQp6GKbvY5j8MUyYbZk8CvvlHD8bI/kicvb1/jxNY+SBhIgxNWXDtxIg8Qv9B8dpSfXctHyxXJkRlHZZZHfrkiPmHtWW8S1PCkfRgpP5wHIu1d5V6hAY+kQo4eiAm4bZY6njap3by25NiyWCZmgFkMPsoRyZGE0d2Vm28e2xHyENjeDvjwk8KjarS7I4h9JEq8xV7xQp1LGlOLqDbgcZPECFS9AzMsodmPBcG38TU7DTkq2gam6lNTluVjaOEvyfrTlTTAtbh+uWelCNzUVQgHHcPXHllZpkxSdnEoZx99y4oLHK91X2qryBypJ8kqOFHfweys3DvL/Mm/520IaNA0JpjdMai9DXuS+glz988DPiWK25vdHSiIq0JsAJVQ6binZvTFpsZfjDlDjC51Gxa7VCzwTisFikw60llI346wBYgFOKmQgXZp/CRr0buEmc3Rs5TsdbtkM7GTTDorfeVJdK9HwjwEU87mpudcR5/kQqRhG4pPElv2N4VwBrhh0YgNupVaDpQhDwexQv6AvwTCMTTwHYeOEOCtBdj90XyyI0uNcET5O11Pybmc4eH4PBM/HsvuYjJFVWNVG+kQQilkAk0AYGxOBVKR0hJmaumPGLOF/Q/YYJUZIqG0N1wQV9WHgGjo="
-    file: target/package/packed-$TRAVIS_TAG.crate
-    file: target/package/nue-io-$TRAVIS_TAG.crate
-    file: target/package/pod-$TRAVIS_TAG.crate
-    file: target/package/nue-codegen-$TRAVIS_TAG.crate
-    file: target/package/nue-macros-$TRAVIS_TAG.crate
-    file: target/package/nue-$TRAVIS_TAG.crate
+    file: $CARGO_TARGET_DIR/package/packed-$TRAVIS_TAG.crate
+    file: $CARGO_TARGET_DIR/package/nue-io-$TRAVIS_TAG.crate
+    file: $CARGO_TARGET_DIR/package/pod-$TRAVIS_TAG.crate
+    file: $CARGO_TARGET_DIR/package/nue-codegen-$TRAVIS_TAG.crate
+    file: $CARGO_TARGET_DIR/package/nue-macros-$TRAVIS_TAG.crate
+    file: $CARGO_TARGET_DIR/package/nue-$TRAVIS_TAG.crate
     skip_cleanup: true
     on:
         tags: true
