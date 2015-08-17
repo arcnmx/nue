@@ -13,11 +13,13 @@ env:
         - secure: "JjFImwQpfHO/hkrDEGAdvG35m0l7HY7pDHaupVhk8nXqPCzIxWhYA2rueP8JIuItfi7jh3Fw43LBjVwidcnXUGLOxsviPdbIQxo51xlKct0zF5dnTDaixAAyrXchgv4scLIxOWAj8z2Me2xFmpVBGiLyS9z0uxuyjV6re7bxU/sHQ7rRIVW1oVCRFiXRXsUIqcgW28fsMUfePswO6+taRBRcaThGYfZ1s3cRfCHFTV+QkWjDANf2CiXy3cHE/YqGAV8yicXvC8CLoiXFt+N6EIhf5UXMZRROgsFRjPp7f42j70Jt9V3vOdcq94NG8Yiv54bRZ/fK5mSCD+f5TjXVcJfx7elwSKrbJB10YDR299wPSrOqpIF2ANRc7lq0+7qU/KeWWnEj4Y+59NxufBC6SiutFFcPzHxhMZf+uhY2/m1Vlw33Hc7ufdzmFENRzrKFCuFkXY+t0xNbUKD7qKG3F07fXipxMiTvITjHPtZC+H6sLeFOmwkKqPm4mvr0ZMvClkenzhiXhaRhEJ8fpSMzsS7PVzyzVxw0LEWyw/BQqjaCn/gb0m74Dmus9ZiotBHPVQsS/QM/qkBhncXv/kz0yalTBwOt90E4DQsoIZiYlW7D8DZ/hEJqvWBoa8HkjNR9HJP5UjCgwKzxSh2iYzPutHftvUoRtM3nThzxd39dTzI="
     matrix:
         - FEATURES=
+          ALT=
 
 matrix:
     include:
         - rust: nightly
           env: FEATURES="--features unstable"
+               ALT="-unstable"
 
 cache:
     directories:
@@ -25,7 +27,7 @@ cache:
         - $HOME/.cargo
 
 script:
-    - export CARGO_TARGET_DIR="$TRAVIS_BUILD_DIR/target/$TRAVIS_RUST_VERSION"
+    - export CARGO_TARGET_DIR="$TRAVIS_BUILD_DIR/target/$TRAVIS_RUST_VERSION$ALT"
     - (cd uninitialized && cargo test -v)
     - (cd packed && cargo test -v $FEATURES)
     - (cd io && cargo test -v)
