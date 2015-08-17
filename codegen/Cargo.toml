@@ -30,4 +30,4 @@ aster = { version = "0.4", default-features = false }
 quasi = { verision = "0.3", default-features = false }
 quasi_macros = { version = "0.3", optional = true }
 syntex = { version = "0.7", optional = true }
-syntex_syntax = { version = "0.9", optional = true }
+syntex_syntax = { version = "0.10", optional = true }

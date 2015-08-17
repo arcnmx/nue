@@ -1,5 +1,6 @@
 use std::mem::{size_of, transmute, uninitialized};
 use std::slice::{from_raw_parts, from_raw_parts_mut};
+use resize_slice::SliceExt;
 use packed::{Unaligned, Aligned};
 use uninitialized;
 
@@ -26,6 +27,19 @@ pub unsafe trait Pod: Sized {
     #[inline]
     fn mut_unaligned<T: Copy + Unaligned>(s: &mut T) -> Option<&mut Self> where Self: Aligned<Unaligned=T> {
         unsafe { Self::as_aligned_mut(s) }
+    }
+
+    /// Safely creates a POD value from a potentially unaligned slice
+    ///
+    /// # Panics
+    ///
+    /// Panics if `slice.len()` is not the same as the type's size
+    #[inline]
+    fn copy_from<'a>(slice: &'a [u8]) -> Self {
+        assert_eq!(slice.len(), size_of::<Self>());
+        let mut s: Self = unsafe { uninitialized() };
+        s.mut_slice().copy_from(slice);
+        s
     }
 
     /// Safely converts an unaligned value to its aligned equivalent

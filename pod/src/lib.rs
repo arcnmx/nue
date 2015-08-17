@@ -38,6 +38,7 @@
 //! ```
 
 extern crate uninitialized;
+extern crate resize_slice;
 extern crate byteorder;
 extern crate packed as nue_packed;
 extern crate nue_io;
